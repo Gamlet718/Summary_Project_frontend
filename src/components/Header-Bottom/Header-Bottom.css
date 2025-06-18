@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.social-list {
+  display: flex;
+  list-style: none; /* убирает маркеры */
+  padding: 0; /* убирает отступы */
+  margin: 0;
+}
+
+.social-list li {
+  margin-right: 20px; /* отступ между элементами */
+}
+
+.navbar-list {
+  display: flex;
+}
+
+.navbar-list li {
+  margin-left: 50px;
+  list-style: none; /* убирает маркеры */
+  text-transform: uppercase;
+  color: white;
+  font-weight: 450;
+  font-size: 17px;
+  line-height: 2;
+}
+
+.navbar-list li a {
+  color: white;
+  transition: color 0.3s ease;
+}
+
+.navbar-list li a:hover {
+  color: #cfcfcf;
+}
+
+.btn-primary {
+  background-color: transparent;
+  border: 0.5px solid white; /* маленькая белая рамка */
+  border-radius: 33px;
+  padding: 4px 8px; /* добавил немного отступов, чтобы рамка не была вплотную к тексту */
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 18px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  color: #cfcfcf;
+  border-color: #cfcfcf;
+}

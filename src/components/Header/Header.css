@@ -1,0 +1,74 @@
+.header {
+  width: 100%; /* во всю ширину */
+  height: 80px; /* увеличенная высота */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px; /* увеличим отступы слева и справа */
+  color: #ffffff; /* white */
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+  border-bottom: 0.01px solid grey; /* черная линия толщиной 2px */
+}
+
+.header__phone {
+  font-weight: 600;
+  flex: 1; /* равная ширина */
+  text-align: left; /* выравнивание по левому краю */
+}
+
+.header__logo {
+  font-weight: 800;
+  font-size: 1rem; /* fs-2 */
+  flex: 1; /* равная ширина */
+  text-align: center; /* центрируем логотип */
+}
+
+/* Новый контейнер для кнопок справа */
+.header__actions {
+  flex: 1; /* равная ширина */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px; /* расстояние между кнопками */
+}
+
+/* Общие стили для кнопок Log in и Sign Up */
+.header__btn {
+  background-color: transparent;
+  border: none; /* или можно добавить border, если нужен */
+  padding: 0;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: inline; /* чтобы ширина была по тексту */
+  transition: color 0.3s ease;
+}
+
+.header__btn:hover {
+  color: #cfcfcf;
+}
+
+.header__btn:active {
+  transform: scale(0.95); /* уменьшаем размер до 95% */
+}
+
+/* Стиль кнопки переключения языка */
+.header__lang-btn {
+  background-color: transparent;
+  border: none; /* или можно добавить border, если нужен */
+  padding: 0;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: inline; /* чтобы ширина была по тексту */
+  transition: color 0.3s ease;
+}
+
+.header__lang-btn:hover {
+  color: #cfcfcf;
+}
+
+.header__lang-btn:active {
+  transform: scale(0.95); /* уменьшаем размер до 95% */
+}
