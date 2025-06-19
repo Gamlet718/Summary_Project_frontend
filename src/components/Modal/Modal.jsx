@@ -9,8 +9,21 @@ export const Demo = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm();
+
+  const passwordValidation = (value) => {
+    const isValid =
+      value.length >= 10 && (value.match(/\d/g) || []).length >= 3;
+
+    return isValid || "Пароль должен содержать минимум 10 символов и 3 цифры";
+  };
+
+  const matchesPreviousPassword = (value) => {
+    const { password1 } = getValues();
+    return value === password1 || "Пароли не совпадают";
+  };
 
   const onSubmit = handleSubmit((data) => {
     console.log(data); // тут будут firstName, lastName и phone
@@ -82,6 +95,60 @@ export const Demo = ({ isOpen, onClose }) => {
                       }}
                     />
                     <Field.ErrorText>{errors.phone?.message}</Field.ErrorText>
+                  </Field.Root>
+                  <Field.Root invalid={!!errors.email}>
+                    <Field.Label>
+                      Email <Field.RequiredIndicator />
+                    </Field.Label>
+                    <Input
+                      placeholder="Enter your email"
+                      {...register("email", {
+                        required: "Email is required",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "Введите корректный адрес электронной почты",
+                        },
+                      })}
+                    />
+                    <Field.ErrorText>{errors.email?.message}</Field.ErrorText>{" "}
+                    <Field.HelperText>
+                      We'll never share your email.
+                    </Field.HelperText>
+                  </Field.Root>
+                  <Field.Root invalid={!!errors.password1}>
+                    <Field.Label>
+                      Password <Field.RequiredIndicator />
+                    </Field.Label>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      {...register("password1", {
+                        required: "Password is required",
+                        validate: passwordValidation,
+                      })}
+                    />
+                    <Field.ErrorText>
+                      {errors.password1?.message}
+                    </Field.ErrorText>
+                  </Field.Root>
+                  <Field.Root invalid={!!errors.password2}>
+                    <Field.Label>
+                      Confirm Password <Field.RequiredIndicator />
+                    </Field.Label>
+                    <Input
+                      type="password"
+                      placeholder="Confirm your password"
+                      {...register("password2", {
+                        required: "Confirm Password is required",
+                        validate: {
+                          matchesPreviousPassword: matchesPreviousPassword,
+                          validatePassword: passwordValidation,
+                        },
+                      })}
+                    />
+                    <Field.ErrorText>
+                      {errors.password2?.message}
+                    </Field.ErrorText>
                   </Field.Root>
                 </Stack>
               </Dialog.Body>
