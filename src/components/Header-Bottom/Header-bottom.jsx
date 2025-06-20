@@ -1,72 +1,85 @@
 import React from "react";
-import "./Header-Bottom.css"
+import { Link } from "react-router-dom";
+import "./Header-Bottom.css";
 
 export const HeaderBottom = () => {
   return (
     <div className="header-bottom">
       <div className="container">
+        {/* Социальные ссылки */}
         <ul className="social-list">
           <li>
-            <a href="#" className="social-link">
+            <a
+              href="https://www.facebook.com/ваша-страница"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ion-icon name="logo-facebook"></ion-icon>
             </a>
           </li>
-
           <li>
-            <a href="#" className="social-link">
+            <a
+              href="https://twitter.com/ваш-профиль"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ion-icon name="logo-twitter"></ion-icon>
             </a>
           </li>
-
           <li>
-            <a href="#" className="social-link">
+            <a
+              href="https://www.youtube.com/ваш-канал"
+              className="social-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <ion-icon name="logo-youtube"></ion-icon>
             </a>
           </li>
         </ul>
 
+        {/* Главное навигационное меню */}
         <nav className="navbar" data-navbar>
-
           <ul className="navbar-list">
             <li>
-              <a href="#home" className="navbar-link" data-nav-link>
+              <Link to="/home" className="navbar-link">
                 home
-              </a>
+              </Link>
             </li>
-
             <li>
-              <a href="#" className="navbar-link" data-nav-link>
+              <Link to="/about-us" className="navbar-link">
                 about us
-              </a>
+              </Link>
             </li>
-
             <li>
-              <a href="#destination" className="navbar-link" data-nav-link>
+              <Link to="/destination" className="navbar-link">
                 destination
-              </a>
+              </Link>
             </li>
-
             <li>
-              <a href="#package" className="navbar-link" data-nav-link>
+              <Link to="/packages" className="navbar-link">
                 packages
-              </a>
+              </Link>
             </li>
-
             <li>
-              <a href="#gallery" className="navbar-link" data-nav-link>
+              <Link to="/#gallery" className="navbar-link">
                 gallery
-              </a>
+              </Link>
             </li>
-
             <li>
-              <a href="#contact" className="navbar-link" data-nav-link>
+              <Link to="/#contact" className="navbar-link">
                 contact us
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
 
-        <button className="btn btn-primary">Book Now</button>
+        {/* Кнопка «Book Now» */}
+        <Link to="/booking" className="btn btn-primary">
+          Book Now
+        </Link>
       </div>
     </div>
   );

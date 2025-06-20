@@ -4,6 +4,8 @@ import Header from "./components/Header/Header";
 import { HeaderBottom } from "./components/Header-Bottom/Header-bottom";
 import "./components/Home/Home.css";
 import { Demo } from "./components/Modal/Modal";
+import { Box } from "@chakra-ui/react";
+import { AppRoutes } from "./routes/AppRoutes";
 
 function App() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -17,9 +19,13 @@ function App() {
         <Header onSignUpClick={openModal} />
         <Demo isOpen={isModalOpen} onClose={closeModal} />
         <HeaderBottom />
+        <Box as="main" minH="calc(100vh - 64px)" p="4">
+          <AppRoutes />
+        </Box>
       </div>
     </>
   );
 }
+
 
 export default App;
