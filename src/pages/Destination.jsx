@@ -1,9 +1,9 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 
 const Destination = () => (
-  <Box p="6">
+  <Box >
     <Heading>Главная страница</Heading>
-    <Text mt="4">Destination</Text>
+    <Text>Destination</Text>
   </Box>
 );
 

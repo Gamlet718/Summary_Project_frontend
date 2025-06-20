@@ -1,10 +1,10 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 
-const About = () => (
-  <Box p="6">
+const My_profile = () => (
+  <Box >
     <Heading>Главная страница</Heading>
-    <Text mt="4">About</Text>
+    <Text >My_profile</Text>
   </Box>
 );
 
-export default About;
+export default My_profile;

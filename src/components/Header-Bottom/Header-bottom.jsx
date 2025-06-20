@@ -49,8 +49,8 @@ export const HeaderBottom = () => {
               </Link>
             </li>
             <li>
-              <Link to="/about-us" className="navbar-link">
-                about us
+              <Link to="/my_profile" className="navbar-link">
+                My profile
               </Link>
             </li>
             <li>

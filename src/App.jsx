@@ -19,7 +19,7 @@ function App() {
         <Header onSignUpClick={openModal} />
         <Demo isOpen={isModalOpen} onClose={closeModal} />
         <HeaderBottom />
-        <Box as="main" minH="calc(100vh - 64px)" p="4">
+        <Box as="main" >
           <AppRoutes />
         </Box>
       </div>

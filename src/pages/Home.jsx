@@ -1,9 +1,9 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 
 const Home = () => (
-  <Box p="6">
+  <Box>
     <Heading>Главная страница</Heading>
-    <Text mt="4">Добро пожаловать на главную!</Text>
+    <Text >Добро пожаловать на главную!</Text>
   </Box>
 );
 
