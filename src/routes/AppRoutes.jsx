@@ -4,6 +4,9 @@ import { lazy, Suspense } from "react";
 const Home = lazy(() => import("../pages/Home"));
 const My_profile = lazy(() => import("../pages/My_profile"));
 const Destination = lazy(() => import("../pages/Destination"));
+const Packages = lazy(() => import("../pages/Packages"));
+const Gallery = lazy(() => import("../pages/Gallery"));
+const Contact = lazy(() => import("../pages/Contact"));
 
 export const AppRoutes = () => (
   <Suspense fallback={<div>Загрузка страницы…</div>}>
@@ -11,8 +14,10 @@ export const AppRoutes = () => (
       <Route path="/" element={<Home />} />
       <Route path="/my_profile" element={<My_profile />} />
       <Route path="/destination" element={<Destination />} />
+      <Route path="/packages" element={<Packages />} />
+      <Route path="/gallery" element={<Gallery />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </Suspense>
 );
-

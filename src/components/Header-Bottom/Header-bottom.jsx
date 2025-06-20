@@ -64,12 +64,12 @@ export const HeaderBottom = () => {
               </Link>
             </li>
             <li>
-              <Link to="/#gallery" className="navbar-link">
+              <Link to="/gallery" className="navbar-link">
                 gallery
               </Link>
             </li>
             <li>
-              <Link to="/#contact" className="navbar-link">
+              <Link to="/contact" className="navbar-link">
                 contact us
               </Link>
             </li>
