@@ -1,9 +1,9 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
+import ProductForm from "../components/ProductForm/ProductForm";
 
 const Destination = () => (
-  <Box >
-    <Heading>Главная страница</Heading>
-    <Text>Destination</Text>
+  <Box>
+    <ProductForm />
   </Box>
 );
 
