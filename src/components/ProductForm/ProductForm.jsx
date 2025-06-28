@@ -1,175 +1,158 @@
-import React, { useState } from 'react';
-import './ProductForm.css';
+import React, { useState, useEffect } from "react";
+import "./ProductForm.css";
 
-const ProductForm = () => {
+const ProductForm = ({ product = null, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    brand: '',
-    quantity: '',
-    image: ''
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    brand: "",
+    quantity: "",
+    image: "",
   });
-
   const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState({ type: '', text: '' });
+  const [busy, setBusy] = useState(false);
+  const [alert, setAlert] = useState({ status: "", message: "" });
 
   const categories = [
-    'Электроника',
-    'Одежда',
-    'Дом и сад',
-    'Спорт',
-    'Книги',
-    'Красота',
-    'Автотовары',
-    'Другое'
+    "Электроника",
+    "Одежда",
+    "Дом и сад",
+    "Спорт",
+    "Книги",
+    "Красота",
+    "Автотовары",
+    "Другое",
   ];
+  const API_BASE_URL = "http://localhost:3000/api";
 
-  const API_BASE_URL = 'http://localhost:3000/api';
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || "",
+        description: product.description || "",
+        price: product.price || "",
+        category: product.category || "",
+        brand: product.brand || "",
+        quantity: product.quantity || "",
+        image: product.image || "",
+      });
+      setErrors({});
+      setAlert({ status: "", message: "" });
+    }
+  }, [product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Убираем ошибку при изменении поля
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-    
-    // Убираем сообщение об отправке
-    if (submitMessage.text) {
-      setSubmitMessage({ type: '', text: '' });
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    if (alert.message) setAlert({ status: "", message: "" });
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Название товара обязательно';
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = 'Описание товара обязательно';
-    }
-
-    if (!formData.price || formData.price <= 0) {
-      newErrors.price = 'Укажите корректную цену';
-    }
-
-    if (!formData.category) {
-      newErrors.category = 'Выберите категорию';
-    }
-
-    if (!formData.quantity || formData.quantity < 0) {
-      newErrors.quantity = 'Укажите количество товара';
-    }
-
-    return newErrors;
+  const validate = () => {
+    const e = {};
+    if (!formData.name.trim()) e.name = "Название товара обязательно";
+    if (!formData.description.trim())
+      e.description = "Описание товара обязательно";
+    if (!formData.price || formData.price <= 0)
+      e.price = "Укажите корректную цену";
+    if (!formData.category) e.category = "Выберите категорию";
+    if (!formData.quantity || formData.quantity < 0)
+      e.quantity = "Укажите количество товара";
+    return e;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+  const handleSubmit = async (ev) => {
+    ev.preventDefault();
+    const v = validate();
+    if (Object.keys(v).length) {
+      setErrors(v);
       return;
     }
 
-    setIsSubmitting(true);
-    setSubmitMessage({ type: '', text: '' });
+    setBusy(true);
+    setAlert({ status: "", message: "" });
+
+    const isEdit = Boolean(product?.id);
+    const url = isEdit
+      ? `${API_BASE_URL}/products/${product.id}`
+      : `${API_BASE_URL}/products`;
+    const method = isEdit ? "PUT" : "POST";
 
     try {
-      const response = await fetch(`${API_BASE_URL}/products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
+      const result = await res.json();
 
-      const result = await response.json();
+      if (res.ok && result.success) {
+        const saved = result.data;
+        onSuccess && onSuccess(saved);
 
-      if (response.ok && result.success) {
-        setSubmitMessage({
-          type: 'success',
-          text: `Товар "${result.data.name}" успешно создан! ID: ${result.data.id}`
+        setAlert({
+          status: "success",
+          message: isEdit ? "Товар успешно изменен" : "Товар успешно создан",
         });
-        
-        // Очищаем форму
-        setFormData({
-          name: '',
-          description: '',
-          price: '',
-          category: '',
-          brand: '',
-          quantity: '',
-          image: ''
-        });
-        
-        console.log('Создан товар:', result.data);
-        
-      } else {
-        // Обработка ошибок валидации с сервера
-        if (result.errors && Array.isArray(result.errors)) {
-          setSubmitMessage({
-            type: 'error',
-            text: result.errors.join(', ')
-          });
-        } else {
-          setSubmitMessage({
-            type: 'error',
-            text: result.message || 'Ошибка при создании товара'
+
+        setTimeout(() => {
+          onSuccess && onSuccess(saved);
+        }, 1500);
+
+        if (!isEdit) {
+          setFormData({
+            name: "",
+            description: "",
+            price: "",
+            category: "",
+            brand: "",
+            quantity: "",
+            image: "",
           });
         }
+      } else {
+        const msg = Array.isArray(result.errors)
+          ? result.errors.join(", ")
+          : result.message || "Ошибка при сохранении товара";
+        setAlert({ status: "error", message: msg });
       }
-      
-    } catch (error) {
-      console.error('Ошибка сети:', error);
-      setSubmitMessage({
-        type: 'error',
-        text: 'Ошибка соединения с сервером. Проверьте, что сервер запущен.'
+    } catch {
+      setAlert({
+        status: "error",
+        message: "Ошибка соединения с сервером. Проверьте доступность API.",
       });
     } finally {
-      setIsSubmitting(false);
+      setBusy(false);
     }
   };
 
   const clearForm = () => {
     setFormData({
-      name: '',
-      description: '',
-      price: '',
-      category: '',
-      brand: '',
-      quantity: '',
-      image: ''
+      name: "",
+      description: "",
+      price: "",
+      category: "",
+      brand: "",
+      quantity: "",
+      image: "",
     });
     setErrors({});
-    setSubmitMessage({ type: '', text: '' });
+    setAlert({ status: "", message: "" });
   };
+
+  const isEdit = Boolean(product?.id);
 
   return (
     <div className="product-form-container">
       <div className="product-form-card">
-        <h2 className="form-title">Создание нового товара</h2>
-        
-        {submitMessage.text && (
-          <div className={`message ${submitMessage.type}`}>
-            {submitMessage.text}
-          </div>
-        )}
-        
+        <h2 className="form-title">
+          {isEdit ? "Редактирование товара" : "Создание нового товара"}
+        </h2>
+
         <form onSubmit={handleSubmit} className="product-form">
+          {/* Название */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name" className="form-label">
@@ -181,13 +164,16 @@ const ProductForm = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`form-input ${errors.name ? 'error' : ''}`}
+                className={`form-input ${errors.name ? "error" : ""}`}
                 placeholder="Введите название товара"
               />
-              {errors.name && <span className="error-message">{errors.name}</span>}
+              {errors.name && (
+                <span className="error-message">{errors.name}</span>
+              )}
             </div>
           </div>
 
+          {/* Описание */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="description" className="form-label">
@@ -196,16 +182,19 @@ const ProductForm = () => {
               <textarea
                 id="description"
                 name="description"
+                rows="4"
                 value={formData.description}
                 onChange={handleChange}
-                className={`form-textarea ${errors.description ? 'error' : ''}`}
+                className={`form-textarea ${errors.description ? "error" : ""}`}
                 placeholder="Описание товара"
-                rows="4"
               />
-              {errors.description && <span className="error-message">{errors.description}</span>}
+              {errors.description && (
+                <span className="error-message">{errors.description}</span>
+              )}
             </div>
           </div>
 
+          {/* Цена и количество */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="price" className="form-label">
@@ -217,14 +206,15 @@ const ProductForm = () => {
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
-                className={`form-input ${errors.price ? 'error' : ''}`}
+                className={`form-input ${errors.price ? "error" : ""}`}
                 placeholder="0.00"
                 min="0"
                 step="0.01"
               />
-              {errors.price && <span className="error-message">{errors.price}</span>}
+              {errors.price && (
+                <span className="error-message">{errors.price}</span>
+              )}
             </div>
-
             <div className="form-group">
               <label htmlFor="quantity" className="form-label">
                 Количество *
@@ -235,14 +225,17 @@ const ProductForm = () => {
                 name="quantity"
                 value={formData.quantity}
                 onChange={handleChange}
-                className={`form-input ${errors.quantity ? 'error' : ''}`}
+                className={`form-input ${errors.quantity ? "error" : ""}`}
                 placeholder="0"
                 min="0"
               />
-              {errors.quantity && <span className="error-message">{errors.quantity}</span>}
+              {errors.quantity && (
+                <span className="error-message">{errors.quantity}</span>
+              )}
             </div>
           </div>
 
+          {/* Категория и бренд */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="category" className="form-label">
@@ -253,18 +246,19 @@ const ProductForm = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className={`form-select ${errors.category ? 'error' : ''}`}
+                className={`form-select ${errors.category ? "error" : ""}`}
               >
                 <option value="">Выберите категорию</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>
-                    {category}
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
                   </option>
                 ))}
               </select>
-              {errors.category && <span className="error-message">{errors.category}</span>}
+              {errors.category && (
+                <span className="error-message">{errors.category}</span>
+              )}
             </div>
-
             <div className="form-group">
               <label htmlFor="brand" className="form-label">
                 Бренд
@@ -281,6 +275,7 @@ const ProductForm = () => {
             </div>
           </div>
 
+          {/* Изображение */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="image" className="form-label">
@@ -297,34 +292,38 @@ const ProductForm = () => {
               />
             </div>
           </div>
-
           {formData.image && (
             <div className="image-preview">
-              <img 
-                src={formData.image} 
-                alt="Предпросмотр" 
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
+              <img
+                src={formData.image}
+                alt="Предпросмотр"
+                onError={(e) => (e.target.style.display = "none")}
               />
             </div>
           )}
 
+          {/* Кнопки */}
           <div className="form-actions">
             <button
               type="button"
               className="btn-form btn-form-secondary"
-              onClick={clearForm}
-              disabled={isSubmitting}
+              onClick={isEdit ? onCancel : clearForm}
+              disabled={busy}
             >
-              Очистить
+              {isEdit ? "Отмена" : "Очистить"}
             </button>
             <button
               type="submit"
               className="btn-form btn-form-primary"
-              disabled={isSubmitting}
+              disabled={busy}
             >
-              {isSubmitting ? 'Создание...' : 'Создать товар'}
+              {busy
+                ? isEdit
+                  ? "Сохранение..."
+                  : "Создание..."
+                : isEdit
+                ? "Сохранить"
+                : "Создать товар"}
             </button>
           </div>
         </form>

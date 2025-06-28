@@ -1,14 +1,1 @@
-[
-  {
-    "id": "d77f25d8-3594-4a68-b672-3a3471438eac",
-    "name": "Мяч",
-    "description": "Футбольный",
-    "price": 100,
-    "category": "Спорт",
-    "brand": "адидас",
-    "quantity": 1,
-    "image": "https://avatars.mds.yandex.net/i?id=7e05dc29441adaa5bc2b1e83cebb5f23_l-4863507-images-thumbs&n=13",
-    "createdAt": "2025-06-24T15:50:49.608Z",
-    "updatedAt": "2025-06-24T15:50:49.608Z"
-  }
-]
+[]
