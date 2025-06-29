@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "5e261f24-e11b-48f5-b21f-68847d03d015",
+    "name": "апрыпыпы",
+    "description": "рпра",
+    "price": 4,
+    "category": "Спорт",
+    "brand": "впа",
+    "quantity": 4,
+    "image": "",
+    "createdAt": "2025-06-29T13:12:03.418Z",
+    "updatedAt": "2025-06-29T13:14:03.268Z"
+  },
+  {
+    "id": "c7e51f03-3727-4067-becf-998f41c452f7",
+    "name": "ыпыпы",
+    "description": "ыпыпы",
+    "price": 1,
+    "category": "Спорт",
+    "brand": "ыпыпы",
+    "quantity": 1,
+    "image": "",
+    "createdAt": "2025-06-29T13:12:13.288Z",
+    "updatedAt": "2025-06-29T13:12:13.288Z"
+  },
+  {
+    "id": "7059ddd8-9071-49ed-ad2e-089c4efe1dd2",
+    "name": "ыпыпы",
+    "description": "ыпыпы",
+    "price": 4,
+    "category": "Книги",
+    "brand": "4аук",
+    "quantity": 4,
+    "image": "",
+    "createdAt": "2025-06-29T13:12:23.178Z",
+    "updatedAt": "2025-06-29T13:12:23.178Z"
+  },
+  {
+    "id": "7b0bbd27-77dc-47a3-991e-53744f4e7c8d",
+    "name": "ыпыпы",
+    "description": "ыпыпы",
+    "price": 3,
+    "category": "Дом и сад",
+    "brand": "ыпыпы",
+    "quantity": 3,
+    "image": "",
+    "createdAt": "2025-06-29T13:12:31.650Z",
+    "updatedAt": "2025-06-29T13:12:31.650Z"
+  },
+  {
+    "id": "a6577893-17b1-49ba-8cf2-40843208eb73",
+    "name": "ыпыпы",
+    "description": "ыпыпы",
+    "price": 3,
+    "category": "Дом и сад",
+    "brand": "ыпыпы",
+    "quantity": 3,
+    "image": "",
+    "createdAt": "2025-06-29T13:12:47.644Z",
+    "updatedAt": "2025-06-29T13:12:47.644Z"
+  }
+]

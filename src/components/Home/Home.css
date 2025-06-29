@@ -1,21 +1,19 @@
 .home {
   width: 100%;
-  height: 200vh; /* высота под два изображения по высоте экрана */
-
+  min-height: 100vh; /* минимум высота экрана */
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)), /* легкое темное наложение */
+    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)),
     url("../../assets/hero-banner.jpg"),
     url("../../assets/Assets-home-1.jpg");
-
   background-repeat: no-repeat, no-repeat;
-
   background-size:
-    100% 100vh,   /* градиент растянут на первую половину */
-    100% 100vh,   /* первое изображение занимает первую половину */
-    100% 100vh;   /* второе изображение занимает вторую половину */
-
+    100% 100vh,
+    100% 100vh,
+    100% 100vh;
   background-position:
     top left,
     top left,
     bottom left;
+
+  background-attachment: fixed, fixed, fixed; /* фиксируем фон */
 }

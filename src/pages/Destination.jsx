@@ -1,3 +1,4 @@
+// Destination.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import ProductForm from "../components/ProductForm/ProductForm";
 import { ProductCard } from "../components/ProductCard/ProductCard";
@@ -8,7 +9,7 @@ const Destination = () => {
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
 
-  // Состояние для уведомлений
+  // Новое состояние для уведомлений
   const [notification, setNotification] = useState({ status: "", message: "" });
 
   const fetchProducts = useCallback(async () => {
@@ -18,7 +19,10 @@ const Destination = () => {
       const { data } = await res.json();
       setProducts(data);
     } catch (err) {
-      // Можно добавить обработку ошибок, если нужно
+      setNotification({
+        status: "error",
+        message: "Не удалось загрузить товары: " + err.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -26,7 +30,7 @@ const Destination = () => {
 
   const handleDelete = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    setNotification({ status: "error", message: "Товар удален" }); // красный
+    setNotification({ status: "error", message: "Товар успешно удалён" });
   };
 
   const handleEdit = (product) => {
@@ -44,8 +48,10 @@ const Destination = () => {
     });
 
     setNotification({
-      status: editingProduct ? "info" : "success", // синий для редактирования, зеленый для добавления
-      message: editingProduct ? "Товар изменен" : "Товар добавлен",
+      status: editingProduct ? "info" : "success",
+      message: editingProduct
+        ? "Товар успешно изменен"
+        : "Товар успешно добавлен",
     });
   };
 
@@ -83,7 +89,17 @@ const Destination = () => {
         />
       </div>
 
-      <div className="destination__grid">
+      {/* Контейнер с grid для равномерного расположения 4 карточек в ряд с отступами по краям */}
+      <div
+        className="destination__grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "16px",
+          padding: "0 16px 8px 16px", // добавлен отступ слева и справа
+          boxSizing: "border-box",
+        }}
+      >
         {products.map((prod) => (
           <ProductCard
             key={prod.id}
