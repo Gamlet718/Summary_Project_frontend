@@ -1,5 +1,5 @@
 // ProductCard.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Image,
@@ -13,7 +13,9 @@ import {
 } from "@chakra-ui/react";
 import { FaTrash, FaEdit, FaShoppingCart } from "react-icons/fa";
 
-export function ProductCard({ product, onDelete, onEdit }) {
+export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
+  const [showEditMessage, setShowEditMessage] = useState(false);
+
   const handleDelete = async () => {
     try {
       const res = await fetch(`/api/products/${product.id}`, {
@@ -30,7 +32,27 @@ export function ProductCard({ product, onDelete, onEdit }) {
     }
   };
 
-  // Статические цвета
+  const handleEditClick = () => {
+    setShowEditMessage(true);
+    onEdit(product);
+  };
+
+  const handleAddToBasketClick = () => {
+    if (onAddToBasket) {
+      console.log("Добавляем товар в корзину:", product);
+      onAddToBasket(product);
+    } else {
+      console.warn("onAddToBasket не передан в ProductCard");
+    }
+  };
+
+  useEffect(() => {
+    if (showEditMessage) {
+      const timer = setTimeout(() => setShowEditMessage(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showEditMessage]);
+
   const bg = "white";
   const borderColor = "gray.200";
   const textColor = "gray.600";
@@ -43,13 +65,36 @@ export function ProductCard({ product, onDelete, onEdit }) {
       borderColor={borderColor}
       overflow="hidden"
       boxShadow="md"
-      maxW="320px"
+      maxW="100%"
+      minW="320px"
       w="full"
       display="flex"
       flexDirection="column"
       transition="transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease"
       _hover={{ transform: "scale(1.015)", boxShadow: "lg" }}
+      position="relative"
     >
+      {showEditMessage && (
+        <Box
+          position="absolute"
+          top="8px"
+          right="8px"
+          bg="gray.700"
+          color="white"
+          px={3}
+          py={1}
+          borderRadius="md"
+          fontSize="sm"
+          opacity={0.8}
+          zIndex={10}
+          boxShadow="md"
+          userSelect="none"
+          transition="opacity 0.3s ease"
+        >
+          Можете переходить к редактированию
+        </Box>
+      )}
+
       <Box
         h="180px"
         overflow="hidden"
@@ -57,12 +102,14 @@ export function ProductCard({ product, onDelete, onEdit }) {
         borderColor={borderColor}
       >
         <Image
-          src={product.image && product.image.trim() !== "" ? product.image : null}
+          src={
+            product.image && product.image.trim() !== "" ? product.image : null
+          }
           alt={product.name}
           objectFit="cover"
           w="100%"
           h="100%"
-          fallbackSrc="https://via.placeholder.com/320x180?text=No+Image"
+          fallbackSrc="https://placehold.co/320x180?text=No+Image"
           transition="transform 0.3s ease"
           _hover={{ transform: "scale(1.05)" }}
         />
@@ -133,7 +180,6 @@ export function ProductCard({ product, onDelete, onEdit }) {
           {product.description}
         </Text>
 
-        {/* Количество товара */}
         {typeof product.quantity !== "undefined" && (
           <Text
             fontSize="sm"
@@ -168,6 +214,8 @@ export function ProductCard({ product, onDelete, onEdit }) {
               boxShadow="md"
               _hover={{ bg: "#e1ffde", boxShadow: "xl" }}
               transition="all 0.3s ease"
+              cursor="pointer"
+              onClick={handleAddToBasketClick}
             >
               В корзину
             </Button>
@@ -175,11 +223,12 @@ export function ProductCard({ product, onDelete, onEdit }) {
               size="sm"
               colorScheme="blue"
               leftIcon={<FaEdit />}
-              onClick={() => onEdit(product)}
+              onClick={handleEditClick}
               borderRadius="full"
               boxShadow="md"
               _hover={{ bg: "#dedfff", boxShadow: "xl" }}
               transition="all 0.3s ease"
+              cursor="pointer"
             >
               Ред.
             </Button>
@@ -192,6 +241,7 @@ export function ProductCard({ product, onDelete, onEdit }) {
               boxShadow="md"
               _hover={{ bg: "#ffdede", boxShadow: "xl" }}
               transition="all 0.3s ease"
+              cursor="pointer"
             >
               Удал.
             </Button>

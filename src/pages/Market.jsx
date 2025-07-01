@@ -1,16 +1,16 @@
-// Destination.jsx
 import React, { useEffect, useState, useCallback } from "react";
+import { useCart } from "../contexts/CartContext";
 import ProductForm from "../components/ProductForm/ProductForm";
 import { ProductCard } from "../components/ProductCard/ProductCard";
 import { Notification } from "../components/Notification/Notification";
 
-const Destination = () => {
+const Market = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
-
-  // Новое состояние для уведомлений
   const [notification, setNotification] = useState({ status: "", message: "" });
+
+  const { addToCart, cart, setCart } = useCart();
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -47,6 +47,15 @@ const Destination = () => {
         : [savedProduct, ...prev];
     });
 
+    // Обновляем товар в корзине, если он там есть
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === savedProduct.id
+          ? { ...savedProduct, selectedQuantity: item.selectedQuantity || 1 }
+          : item
+      )
+    );
+
     setNotification({
       status: editingProduct ? "info" : "success",
       message: editingProduct
@@ -66,7 +75,7 @@ const Destination = () => {
   const closeNotification = () => setNotification({ status: "", message: "" });
 
   return (
-    <div className="destination">
+    <div className="market">
       <Notification
         status={notification.status}
         message={notification.message}
@@ -80,23 +89,25 @@ const Destination = () => {
 
       <h2>Управление товарами</h2>
 
-      <div className="destination__form">
+      <div className="market__form">
         <ProductForm
           key={editingProduct?.id ?? "new"}
           product={editingProduct}
           onSuccess={handleFormSuccess}
           onCancel={() => setEditingProduct(null)}
+          style={{
+            width: 300,
+          }}
         />
       </div>
 
-      {/* Контейнер с grid для равномерного расположения 4 карточек в ряд с отступами по краям */}
       <div
-        className="destination__grid"
+        className="market__grid"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
           gap: "16px",
-          padding: "0 16px 8px 16px", // добавлен отступ слева и справа
+          padding: "0 16px 8px 16px",
           boxSizing: "border-box",
         }}
       >
@@ -106,6 +117,7 @@ const Destination = () => {
             product={prod}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            onAddToBasket={addToCart} // Используем контекст
           />
         ))}
       </div>
@@ -113,4 +125,4 @@ const Destination = () => {
   );
 };
 
-export default Destination;
+export default Market;

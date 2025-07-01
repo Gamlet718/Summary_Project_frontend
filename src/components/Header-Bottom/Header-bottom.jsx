@@ -45,40 +45,40 @@ export const HeaderBottom = () => {
           <ul className="navbar-list">
             <li>
               <Link to="/home" className="navbar-link">
-                home
+                Дом
               </Link>
             </li>
             <li>
               <Link to="/my_profile" className="navbar-link">
-                My profile
+                Мой профиль
               </Link>
             </li>
             <li>
-              <Link to="/destination" className="navbar-link">
-                destination
+              <Link to="/market" className="navbar-link">
+                Маркет
               </Link>
             </li>
             <li>
               <Link to="/packages" className="navbar-link">
-                packages
+                Наборы
               </Link>
             </li>
             <li>
               <Link to="/gallery" className="navbar-link">
-                gallery
+                Галерея
               </Link>
             </li>
             <li>
               <Link to="/contact" className="navbar-link">
-                contact us
+                Контакты
               </Link>
             </li>
           </ul>
         </nav>
 
         {/* Кнопка «Book Now» */}
-        <Link to="/booking" className="btn btn-primary">
-          Book Now
+        <Link to="/basket" className="btn btn-primary">
+          Корзина
         </Link>
       </div>
     </div>

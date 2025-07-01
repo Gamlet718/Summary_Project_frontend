@@ -1,27 +1,27 @@
 [
   {
     "id": "5e261f24-e11b-48f5-b21f-68847d03d015",
-    "name": "апрыпыпы",
+    "name": "мяч",
     "description": "рпра",
     "price": 4,
     "category": "Спорт",
     "brand": "впа",
     "quantity": 4,
-    "image": "",
+    "image": "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/cbd/768_1024_ae9e/31909600299.jpg",
     "createdAt": "2025-06-29T13:12:03.418Z",
-    "updatedAt": "2025-06-29T13:14:03.268Z"
+    "updatedAt": "2025-07-01T16:22:28.632Z"
   },
   {
     "id": "c7e51f03-3727-4067-becf-998f41c452f7",
-    "name": "ыпыпы",
-    "description": "ыпыпы",
+    "name": "ыпыпыhrth",
+    "description": "ыпыпывак",
     "price": 1,
     "category": "Спорт",
     "brand": "ыпыпы",
-    "quantity": 1,
+    "quantity": 2,
     "image": "",
     "createdAt": "2025-06-29T13:12:13.288Z",
-    "updatedAt": "2025-06-29T13:12:13.288Z"
+    "updatedAt": "2025-06-30T15:01:42.804Z"
   },
   {
     "id": "7059ddd8-9071-49ed-ad2e-089c4efe1dd2",
@@ -49,14 +49,14 @@
   },
   {
     "id": "a6577893-17b1-49ba-8cf2-40843208eb73",
-    "name": "ыпыпы",
-    "description": "ыпыпы",
+    "name": "ыпыпыукп",
+    "description": "ыпыпыаее6",
     "price": 3,
     "category": "Дом и сад",
     "brand": "ыпыпы",
     "quantity": 3,
     "image": "",
     "createdAt": "2025-06-29T13:12:47.644Z",
-    "updatedAt": "2025-06-29T13:12:47.644Z"
+    "updatedAt": "2025-06-30T14:53:37.089Z"
   }
 ]

@@ -1,0 +1,59 @@
+.basket-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.basket-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.basket-table th,
+.basket-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.basket-table th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+}
+
+.basket-product-image {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.quantity-input {
+  width: 60px;
+  padding: 4px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.quantity-max-info {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+.basket-product-description,
+.basket-product-name,
+.basket-product-category,
+.basket-product-brand {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.Price_table{
+    width: 20px;
+}
