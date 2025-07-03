@@ -1,7 +1,11 @@
-const express = require("express");
-const fs = require("fs").promises;
-const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+import express from "express";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 const DATA_FILE = path.join(__dirname, "../data/products.json");
@@ -19,7 +23,7 @@ const readProducts = async () => {
     return JSON.parse(data);
   } catch (error) {
     if (error.code === "ENOENT") {
-      await writeProducts([]); // теперь writeProducts определён
+      await writeProducts([]);
       return [];
     }
     throw error;
@@ -38,11 +42,7 @@ const validateProduct = (product) => {
     errors.push("Описание товара обязательно");
   }
 
-  if (
-    !product.price ||
-    isNaN(product.price) ||
-    parseFloat(product.price) <= 0
-  ) {
+  if (!product.price || isNaN(product.price) || parseFloat(product.price) <= 0) {
     errors.push("Цена должна быть положительным числом");
   }
 
@@ -141,9 +141,7 @@ router.post("/", async (req, res) => {
     // Записываем обновленный список
     await writeProducts(products);
 
-    console.log(
-      `✅ Создан новый товар: ${newProduct.name} (ID: ${newProduct.id})`
-    );
+    console.log(`✅ Создан новый товар: ${newProduct.name} (ID: ${newProduct.id})`);
 
     res.status(201).json({
       success: true,
@@ -252,4 +250,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const productsRouter = require('./server-routes/products');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import productsRouter from './server-routes/products.js'; // Обрати внимание на расширение .js
 
 const app = express();
 const PORT = process.env.PORT || 3001;

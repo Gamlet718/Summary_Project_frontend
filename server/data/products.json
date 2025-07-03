@@ -1,41 +1,5 @@
 [
   {
-    "id": "5e261f24-e11b-48f5-b21f-68847d03d015",
-    "name": "мяч",
-    "description": "рпра",
-    "price": 4,
-    "category": "Спорт",
-    "brand": "впа",
-    "quantity": 4,
-    "image": "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/cbd/768_1024_ae9e/31909600299.jpg",
-    "createdAt": "2025-06-29T13:12:03.418Z",
-    "updatedAt": "2025-07-01T16:22:28.632Z"
-  },
-  {
-    "id": "c7e51f03-3727-4067-becf-998f41c452f7",
-    "name": "ыпыпыhrth",
-    "description": "ыпыпывак",
-    "price": 1,
-    "category": "Спорт",
-    "brand": "ыпыпы",
-    "quantity": 2,
-    "image": "",
-    "createdAt": "2025-06-29T13:12:13.288Z",
-    "updatedAt": "2025-06-30T15:01:42.804Z"
-  },
-  {
-    "id": "7059ddd8-9071-49ed-ad2e-089c4efe1dd2",
-    "name": "ыпыпы",
-    "description": "ыпыпы",
-    "price": 4,
-    "category": "Книги",
-    "brand": "4аук",
-    "quantity": 4,
-    "image": "",
-    "createdAt": "2025-06-29T13:12:23.178Z",
-    "updatedAt": "2025-06-29T13:12:23.178Z"
-  },
-  {
     "id": "7b0bbd27-77dc-47a3-991e-53744f4e7c8d",
     "name": "ыпыпы",
     "description": "ыпыпы",

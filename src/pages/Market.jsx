@@ -10,7 +10,7 @@ const Market = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [notification, setNotification] = useState({ status: "", message: "" });
 
-  const { addToCart, cart, setCart } = useCart();
+  const { addToCart, removeFromCart, setCart } = useCart();
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -31,6 +31,9 @@ const Market = () => {
   const handleDelete = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setNotification({ status: "error", message: "Товар успешно удалён" });
+
+    // Удаляем товар из корзины через removeFromCart
+    removeFromCart(id);
   };
 
   const handleEdit = (product) => {
@@ -47,7 +50,6 @@ const Market = () => {
         : [savedProduct, ...prev];
     });
 
-    // Обновляем товар в корзине, если он там есть
     setCart((prevCart) =>
       prevCart.map((item) =>
         item.id === savedProduct.id
@@ -117,7 +119,7 @@ const Market = () => {
             product={prod}
             onDelete={handleDelete}
             onEdit={handleEdit}
-            onAddToBasket={addToCart} // Используем контекст
+            onAddToBasket={addToCart} // Добавление в корзину
           />
         ))}
       </div>

@@ -3,7 +3,6 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  // Загружаем корзину из localStorage или пустой массив
   const [cart, setCart] = useState(() => {
     try {
       const storedCart = localStorage.getItem("cart");
@@ -13,7 +12,6 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // Сохраняем корзину в localStorage при изменении
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
