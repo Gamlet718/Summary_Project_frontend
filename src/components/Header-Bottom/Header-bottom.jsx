@@ -1,8 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
+// src/components/Header-Bottom/Header-Bottom.jsx
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Header-Bottom.css";
+import { AuthContext } from "../../contexts/AuthContext";
 
-export const HeaderBottom = () => {
+export const HeaderBottom = ({ onRequireAuth }) => {
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [pendingPath, setPendingPath] = useState(null);
+
+  const handleProtectedClick = (path) => {
+    console.log("HeaderBottom: handleProtectedClick", path, isAuthenticated);
+    if (!isAuthenticated) {
+      setPendingPath(path);
+      onRequireAuth();
+    } else {
+      navigate(path);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && pendingPath) {
+      console.log("HeaderBottom: navigating to pendingPath", pendingPath);
+      navigate(pendingPath);
+      setPendingPath(null);
+    }
+  }, [isAuthenticated, pendingPath, navigate]);
+
   return (
     <div className="header-bottom">
       <div className="container">
@@ -49,19 +73,31 @@ export const HeaderBottom = () => {
               </Link>
             </li>
             <li>
-              <Link to="/my_profile" className="navbar-link">
+              <button
+                className="navbar-link btn-link"
+                onClick={() => handleProtectedClick("/my_profile")}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              >
                 Мой профиль
-              </Link>
+              </button>
             </li>
             <li>
-              <Link to="/market" className="navbar-link">
+              <button
+                className="navbar-link btn-link"
+                onClick={() => handleProtectedClick("/market")}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              >
                 Маркет
-              </Link>
+              </button>
             </li>
             <li>
-              <Link to="/packages" className="navbar-link">
+              <button
+                className="navbar-link btn-link"
+                onClick={() => handleProtectedClick("/packages")}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              >
                 Наборы
-              </Link>
+              </button>
             </li>
             <li>
               <Link to="/gallery" className="navbar-link">
@@ -76,10 +112,14 @@ export const HeaderBottom = () => {
           </ul>
         </nav>
 
-        {/* Кнопка «Book Now» */}
-        <Link to="/basket" className="btn btn-primary">
+        {/* Кнопка «Корзина» */}
+        <button
+          className="btn btn-primary"
+          onClick={() => handleProtectedClick("/basket")}
+          style={{ cursor: "pointer" }}
+        >
           Корзина
-        </Link>
+        </button>
       </div>
     </div>
   );
