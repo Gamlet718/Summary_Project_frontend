@@ -66,6 +66,15 @@ const Market = () => {
     });
   };
 
+  // Новая функция для добавления в корзину с уведомлением
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setNotification({
+      status: "success",
+      message: "Товар успешно добавлен в корзину",
+    });
+  };
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -119,7 +128,7 @@ const Market = () => {
             product={prod}
             onDelete={handleDelete}
             onEdit={handleEdit}
-            onAddToBasket={addToCart} // Добавление в корзину
+            onAddToBasket={handleAddToCart} // Передаем новую функцию с уведомлением
           />
         ))}
       </div>

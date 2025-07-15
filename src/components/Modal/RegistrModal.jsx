@@ -34,8 +34,6 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     };
   }, [isOpen, onClose]);
 
-  const password = watch("password1");
-
   const passwordValidation = (v) => {
     const ok = v.length >= 10 && (v.match(/\d/g) || []).length >= 3;
     return ok || "Пароль минимум 10 символов и 3 цифры";
@@ -45,7 +43,11 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     v === getValues().password1 || "Пароли не совпадают";
 
   const onSubmit = async (data) => {
-    const success = await registerUser(data);
+    const success = await registerUser({
+      email: data.email,
+      password1: data.password1,
+      role: data.role,
+    });
     if (success) {
       onClose();
     } else {
@@ -65,8 +67,9 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
               <Dialog.Body pb="4">
                 <Stack gap="4" maxW="sm" align="flex-start">
                   <Field.Root invalid={!!errors.firstName}>
-                    <Field.Label>First Name</Field.Label>
+                    <Field.Label htmlFor="firstName">First Name</Field.Label>
                     <Input
+                      id="firstName"
                       placeholder="First Name"
                       {...register("firstName", {
                         required: "Required",
@@ -78,8 +81,9 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.lastName}>
-                    <Field.Label>Last Name</Field.Label>
+                    <Field.Label htmlFor="lastName">Last Name</Field.Label>
                     <Input
+                      id="lastName"
                       placeholder="Last Name"
                       {...register("lastName", {
                         required: "Required",
@@ -91,8 +95,9 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.phone}>
-                    <Field.Label>Phone</Field.Label>
+                    <Field.Label htmlFor="phone">Phone</Field.Label>
                     <Input
+                      id="phone"
                       placeholder="+7 (999) 999-99-99"
                       {...register("phone", {
                         required: "Phone is required",
@@ -109,10 +114,11 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.email}>
-                    <Field.Label>
+                    <Field.Label htmlFor="email">
                       Email <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
+                      id="email"
                       placeholder="Enter your email"
                       {...register("email", {
                         required: "Required",
@@ -126,11 +132,33 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                     <Field.HelperText>We'll never share your email.</Field.HelperText>
                   </Field.Root>
 
+                  <Field.Root invalid={!!errors.role}>
+                    <Field.Label htmlFor="role">Роль</Field.Label>
+                    <select
+                      id="role"
+                      {...register("role", {
+                        required: "Выберите роль",
+                      })}
+                      style={{
+                        width: "100%",
+                        padding: "8px",
+                        borderRadius: "4px",
+                        border: errors.role ? "1px solid red" : "1px solid #ccc",
+                      }}
+                    >
+                      <option value="">Выберите роль</option>
+                      <option value="buyer">Покупатель</option>
+                      <option value="seller">Продавец</option>
+                    </select>
+                    <Field.ErrorText>{errors.role?.message}</Field.ErrorText>
+                  </Field.Root>
+
                   <Field.Root invalid={!!errors.password1}>
-                    <Field.Label>
+                    <Field.Label htmlFor="password1">
                       Password <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
+                      id="password1"
                       type="password"
                       placeholder="Enter your password"
                       {...register("password1", {
@@ -142,10 +170,11 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.password2}>
-                    <Field.Label>
+                    <Field.Label htmlFor="password2">
                       Confirm Password <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
+                      id="password2"
                       type="password"
                       placeholder="Confirm your password"
                       {...register("password2", {

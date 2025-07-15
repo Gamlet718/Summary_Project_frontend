@@ -19,11 +19,11 @@ export function BasketProduct({ product, onQuantityChange, onDelete }) {
           style={{ objectFit: "cover" }}
         />
       </td>
-      <td>{product.name}</td>
-      <td>{product.description}</td>
-      <td>{product.category}</td>
-      <td>{product.brand}</td>
-      <td>{product.price} ₽</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.name}</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.description}</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.category}</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.brand}</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.price} ₽</td>
       <td>
         <input
           type="number"
@@ -33,11 +33,11 @@ export function BasketProduct({ product, onQuantityChange, onDelete }) {
           onChange={handleInputChange}
           style={{ width: "60px" }}
         />
-        <div style={{ fontSize: "0.75rem", color: "#666" }}>
+        <div style={{ fontSize: "0.75rem", color: "#666",color: "white", fontWeight: 600 }}>
           Максимум: {product.quantity}
         </div>
       </td>
-      <td className="Price_table" >{(product.price * product.selectedQuantity).toFixed(2)} ₽</td>
+      <td style={{ color: "white", fontWeight: 600 }} className="Price_table" >{(product.price * product.selectedQuantity).toFixed(2)}  ₽</td>
       <td>
         <button
           onClick={() => onDelete(product.id)}

@@ -10,22 +10,17 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../contexts/AuthContext";
-import { sendPasswordResetEmail, confirmPasswordReset } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 
 export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
 
   const [loginError, setLoginError] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetStep, setResetStep] = useState(1);
   const [resetEmail, setResetEmail] = useState("");
-  const [codeSent, setCodeSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
-  const [inputCode, setInputCode] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [resetError, setResetError] = useState("");
 
   useEffect(() => {
@@ -55,54 +50,13 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
     return emailRegex.test(value) || "Введите корректный email";
   };
 
-  // Имитация отправки кода (Firebase не поддерживает код в 5 цифр, поэтому имитируем)
   const sendResetCode = async (email) => {
     try {
       await sendPasswordResetEmail(auth, email);
-      // Генерируем 5-значный код для имитации
-      const code = Math.floor(10000 + Math.random() * 90000).toString();
-      setVerificationCode(code);
-      setCodeSent(true);
       setResetError("");
-      alert(`Код для восстановления пароля: ${code} (отправлен на ${email})`);
+      setResetStep(2); // Переход к сообщению об успешной отправке
     } catch (error) {
       setResetError("Ошибка при отправке письма. Проверьте email.");
-    }
-  };
-
-  const verifyCode = () => {
-    if (inputCode === verificationCode) {
-      setResetError("");
-      setResetStep(3);
-    } else {
-      setResetError("Неверный код");
-    }
-  };
-
-  const changePassword = async () => {
-    if (newPassword.length < 6) {
-      setResetError("Пароль должен быть минимум 6 символов");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setResetError("Пароли не совпадают");
-      return;
-    }
-    try {
-      // В Firebase для смены пароля нужен oobCode из письма, здесь имитация:
-      // В реальном приложении нужно реализовать полноценный flow с oobCode
-      alert("Пароль успешно изменён! Пожалуйста, войдите с новым паролем.");
-      setShowForgotPassword(false);
-      setResetStep(1);
-      setResetEmail("");
-      setCodeSent(false);
-      setVerificationCode("");
-      setInputCode("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setResetError("");
-    } catch (error) {
-      setResetError("Ошибка при смене пароля");
     }
   };
 
@@ -115,7 +69,9 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
           <Dialog.Content style={{ background: "#fff", borderRadius: 6, padding: 20, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}>
             {!showForgotPassword && (
               <form onSubmit={handleSubmit(onSubmit)}>
-                <Dialog.Header><Dialog.Title>Вход в систему</Dialog.Title></Dialog.Header>
+                <Dialog.Header>
+                  <Dialog.Title>Вход в систему</Dialog.Title>
+                </Dialog.Header>
                 <Dialog.Body pb="4">
                   <Stack gap="4" maxW="sm" align="flex-start">
                     <Field.Root invalid={!!errors.identifier}>
@@ -149,6 +105,11 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                       Забыли пароль?
                     </button>
                   </div>
+                  {user && (
+                    <div style={{ marginTop: 15, fontWeight: "bold" }}>
+                      Ваша роль: <span style={{ color: "green" }}>{user.role || "не назначена"}</span>
+                    </div>
+                  )}
                 </Dialog.Body>
                 <Dialog.Footer>
                   <Button variant="outline" onClick={onClose} type="button">Отмена</Button>
@@ -181,57 +142,34 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                       <Button
                         mt={4}
                         onClick={() => {
-                          if (!validateEmail(resetEmail) === true) {
+                          if (validateEmail(resetEmail) !== true) {
                             setResetError("Введите корректный email");
                             return;
                           }
                           sendResetCode(resetEmail);
-                          setResetStep(2);
                         }}
                       >
-                        Отправить код
+                        Отправить ссылку
                       </Button>
                     </>
                   )}
 
                   {resetStep === 2 && (
                     <>
-                      <Field.Root invalid={!!resetError}>
-                        <Field.Label>Введите 5-значный код</Field.Label>
-                        <Input
-                          placeholder="Код"
-                          value={inputCode}
-                          onChange={(e) => setInputCode(e.target.value)}
-                          maxLength={5}
-                        />
-                        {resetError && <Field.ErrorText>{resetError}</Field.ErrorText>}
-                      </Field.Root>
-                      <Button mt={4} onClick={verifyCode}>Проверить код</Button>
-                    </>
-                  )}
-
-                  {resetStep === 3 && (
-                    <>
-                      <Field.Root invalid={!!resetError}>
-                        <Field.Label>Новый пароль</Field.Label>
-                        <Input
-                          type="password"
-                          placeholder="Новый пароль"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                      </Field.Root>
-                      <Field.Root invalid={!!resetError}>
-                        <Field.Label>Подтвердите новый пароль</Field.Label>
-                        <Input
-                          type="password"
-                          placeholder="Подтвердите пароль"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                        {resetError && <Field.ErrorText>{resetError}</Field.ErrorText>}
-                      </Field.Root>
-                      <Button mt={4} onClick={changePassword}>Сменить пароль</Button>
+                      <div style={{ marginTop: 10, color: "green" }}>
+                        Ссылка для сброса пароля успешно отправлена на ваш email.
+                      </div>
+                      <Button
+                        mt={4}
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setResetStep(1);
+                          setResetEmail("");
+                          setResetError("");
+                        }}
+                      >
+                        Закрыть
+                      </Button>
                     </>
                   )}
                 </Dialog.Body>
@@ -240,11 +178,6 @@ export const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                     setShowForgotPassword(false);
                     setResetStep(1);
                     setResetEmail("");
-                    setCodeSent(false);
-                    setVerificationCode("");
-                    setInputCode("");
-                    setNewPassword("");
-                    setConfirmPassword("");
                     setResetError("");
                   }} type="button">Отмена</Button>
                 </Dialog.Footer>

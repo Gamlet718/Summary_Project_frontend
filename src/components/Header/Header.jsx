@@ -13,7 +13,6 @@ export default function Header({ onSignUpClick, onLoginClick }) {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLoginClick = () => {
-    console.log("Header: handleLoginClick", isAuthenticated);
     if (isAuthenticated) {
       setShowLogoutModal(true);
     } else {
@@ -83,7 +82,13 @@ export default function Header({ onSignUpClick, onLoginClick }) {
                 <Dialog.Title>Вы уже в системе</Dialog.Title>
               </Dialog.Header>
               <Dialog.Body>
-                <p>Вы вошли как {user?.email}. Хотите выйти?</p>
+                <p>
+                  Вы вошли как <b>{user?.email}</b>
+                  {user?.role && (
+                    <> - <b>{user.role}</b></>
+                  )}
+                  . Хотите выйти?
+                </p>
               </Dialog.Body>
               <Dialog.Footer>
                 <Button variant="outline" onClick={closeLogoutModal} type="button">

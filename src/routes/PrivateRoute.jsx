@@ -1,3 +1,4 @@
+// src/routes/PrivateRoute.jsx
 import React, { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 
@@ -8,11 +9,10 @@ export const PrivateRoute = ({ children, onRequireAuth }) => {
   useEffect(() => {
     if (!isAuthenticated && !hasRequestedAuth.current) {
       hasRequestedAuth.current = true;
-      console.log("PrivateRoute: calling onRequireAuth");
-      onRequireAuth();
+      onRequireAuth && onRequireAuth();
     }
     if (isAuthenticated) {
-      hasRequestedAuth.current = false; // сбрасываем флаг при аутентификации
+      hasRequestedAuth.current = false;
     }
   }, [isAuthenticated, onRequireAuth]);
 
