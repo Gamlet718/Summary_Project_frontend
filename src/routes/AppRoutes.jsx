@@ -6,7 +6,7 @@ import { PrivateRoute } from "../routes/PrivateRoute";
 
 const Home = lazy(() => import("../pages/Home"));
 const My_profile = lazy(() => import("../pages/My_profile"));
-const Market = lazy(() => import("../pages/Market"));
+const Market = lazy(() => import("../pages/Market/Market"));
 const Packages = lazy(() => import("../pages/Packages"));
 const Gallery = lazy(() => import("../pages/Gallery"));
 const Contact = lazy(() => import("../pages/Contact"));

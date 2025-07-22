@@ -1,20 +1,11 @@
 .home {
   width: 100%;
   margin-bottom: -25px;
-  min-height: 100vh; /* минимум высота экрана */
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)),
-    url("../../assets/hero-banner.jpg"),
-    url("../../assets/Assets-home-1.jpg");
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0)),
+    url("../../assets/Библиотека.jpg");
   background-repeat: no-repeat, no-repeat;
-  background-size:
-    100% 100vh,
-    100% 100vh,
-    100% 100vh;
-  background-position:
-    top left,
-    top left,
-    bottom left;
-
-  background-attachment: fixed, fixed, fixed; /* фиксируем фон */
+  background-size: 100% 100vh, 100% 100vh;
+  background-position: top left, top left;
+  background-attachment: fixed, fixed;
 }

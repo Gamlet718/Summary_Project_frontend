@@ -1,0 +1,17 @@
+/* Market.css */
+.market {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.btn-create-product {
+  margin-bottom: 16px;
+}
+
+.market__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  padding: 0 16px 8px 16px;
+  box-sizing: border-box;
+}

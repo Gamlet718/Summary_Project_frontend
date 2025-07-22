@@ -1,7 +1,8 @@
+// ProductForm.jsx
 import React, { useState, useEffect } from "react";
 import "./ProductForm.css";
 
-const ProductForm = ({ product = null, onSuccess, onCancel }) => {
+const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -14,18 +15,11 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState({ status: "", message: "" });
+  const [visible, setVisible] = useState(false);
 
-  const categories = [
-    "Электроника",
-    "Одежда",
-    "Дом и сад",
-    "Спорт",
-    "Книги",
-    "Красота",
-    "Автотовары",
-    "Другое",
-  ];
-  const API_BASE_URL = "http://localhost:3000/api";
+  useEffect(() => {
+    setVisible(true);
+  }, []);
 
   useEffect(() => {
     if (product) {
@@ -42,6 +36,13 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
       setAlert({ status: "", message: "" });
     }
   }, [product]);
+
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(() => {
+      onCancel && onCancel();
+    }, 300);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -75,6 +76,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
     setAlert({ status: "", message: "" });
 
     const isEdit = Boolean(product?.id);
+    const API_BASE_URL = "http://localhost:3000/api";
     const url = isEdit
       ? `${API_BASE_URL}/products/${product.id}`
       : `${API_BASE_URL}/products`;
@@ -145,14 +147,25 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
   const isEdit = Boolean(product?.id);
 
   return (
-    <div className="product-form-container">
+    <div
+      className={`product-form-container ${visible ? "fade-in" : "fade-out"}`}
+      style={style}
+    >
       <div className="product-form-card">
+        <button
+          className="btn-close-form"
+          onClick={handleClose}
+          aria-label="Закрыть форму"
+          type="button"
+        >
+          ×
+        </button>
+
         <h2 className="form-title">
           {isEdit ? "Редактирование товара" : "Создание нового товара"}
         </h2>
 
         <form onSubmit={handleSubmit} className="product-form">
-          {/* Название */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name" className="form-label">
@@ -173,7 +186,6 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
             </div>
           </div>
 
-          {/* Описание */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="description" className="form-label">
@@ -194,7 +206,6 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
             </div>
           </div>
 
-          {/* Цена и количество */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="price" className="form-label">
@@ -235,7 +246,6 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
             </div>
           </div>
 
-          {/* Категория и бренд */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="category" className="form-label">
@@ -249,7 +259,16 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
                 className={`form-select ${errors.category ? "error" : ""}`}
               >
                 <option value="">Выберите категорию</option>
-                {categories.map((c) => (
+                {[
+                  "Электроника",
+                  "Одежда",
+                  "Дом и сад",
+                  "Спорт",
+                  "Книги",
+                  "Красота",
+                  "Автотовары",
+                  "Другое",
+                ].map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -275,7 +294,6 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
             </div>
           </div>
 
-          {/* Изображение */}
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="image" className="form-label">
@@ -302,12 +320,11 @@ const ProductForm = ({ product = null, onSuccess, onCancel }) => {
             </div>
           )}
 
-          {/* Кнопки */}
           <div className="form-actions">
             <button
               type="button"
               className="btn-form btn-form-secondary"
-              onClick={isEdit ? onCancel : clearForm}
+              onClick={isEdit ? handleClose : clearForm}
               disabled={busy}
             >
               {isEdit ? "Отмена" : "Очистить"}

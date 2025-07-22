@@ -1,14 +1,17 @@
+// Market.jsx
 import React, { useEffect, useState, useCallback } from "react";
-import { useCart } from "../contexts/CartContext";
-import ProductForm from "../components/ProductForm/ProductForm";
-import { ProductCard } from "../components/ProductCard/ProductCard";
-import { Notification } from "../components/Notification/Notification";
+import { useCart } from "../../contexts/CartContext";
+import ProductForm from "../../components/ProductForm/ProductForm";
+import { ProductCard } from "../../components/ProductCard/ProductCard";
+import { Notification } from "../../components/Notification/Notification";
+import "./Market.css";
 
 const Market = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
   const [notification, setNotification] = useState({ status: "", message: "" });
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
   const { addToCart, removeFromCart, setCart } = useCart();
 
@@ -31,17 +34,17 @@ const Market = () => {
   const handleDelete = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setNotification({ status: "error", message: "Товар успешно удалён" });
-
-    // Удаляем товар из корзины через removeFromCart
     removeFromCart(id);
   };
 
   const handleEdit = (product) => {
     setEditingProduct(product);
+    setIsFormVisible(true);
   };
 
   const handleFormSuccess = (savedProduct) => {
     setEditingProduct(null);
+    setIsFormVisible(false);
 
     setProducts((prev) => {
       const exists = prev.some((p) => p.id === savedProduct.id);
@@ -66,7 +69,6 @@ const Market = () => {
     });
   };
 
-  // Новая функция для добавления в корзину с уведомлением
   const handleAddToCart = (product) => {
     addToCart(product);
     setNotification({
@@ -78,6 +80,21 @@ const Market = () => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === "Escape") {
+        setIsFormVisible(false);
+        setEditingProduct(null);
+      }
+    };
+    if (isFormVisible) {
+      window.addEventListener("keydown", handleEsc);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [isFormVisible]);
 
   if (loading) {
     return <div className="centered">Загрузка…</div>;
@@ -91,44 +108,48 @@ const Market = () => {
         status={notification.status}
         message={notification.message}
         onClose={closeNotification}
-        style={{
-          fontSize: 14,
-          minWidth: 220,
-          padding: "10px 16px",
-        }}
+        style={{ fontSize: 14, minWidth: 220, padding: "10px 16px" }}
       />
 
       <h2>Управление товарами</h2>
 
-      <div className="market__form">
+      {/* Кнопка видна только если форма не открыта */}
+      {!isFormVisible && (
+        <button
+          className="btn btn-primary btn-create-product"
+          onClick={() => {
+            setEditingProduct(null);
+            setIsFormVisible(true);
+          }}
+        >
+          Создать товар
+        </button>
+      )}
+
+      {isFormVisible && (
         <ProductForm
           key={editingProduct?.id ?? "new"}
           product={editingProduct}
-          onSuccess={handleFormSuccess}
-          onCancel={() => setEditingProduct(null)}
-          style={{
-            width: 300,
+          onSuccess={(savedProduct) => {
+            handleFormSuccess(savedProduct);
+            setIsFormVisible(false);
           }}
+          onCancel={() => {
+            setIsFormVisible(false);
+            setEditingProduct(null);
+          }}
+          style={{ width: 320 }}
         />
-      </div>
+      )}
 
-      <div
-        className="market__grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "16px",
-          padding: "0 16px 8px 16px",
-          boxSizing: "border-box",
-        }}
-      >
+      <div className="market__grid">
         {products.map((prod) => (
           <ProductCard
             key={prod.id}
             product={prod}
             onDelete={handleDelete}
             onEdit={handleEdit}
-            onAddToBasket={handleAddToCart} // Передаем новую функцию с уведомлением
+            onAddToBasket={handleAddToCart}
           />
         ))}
       </div>
