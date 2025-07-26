@@ -1,26 +1,26 @@
 [
   {
-    "id": "7b0bbd27-77dc-47a3-991e-53744f4e7c8d",
-    "name": "ыпыпы",
-    "description": "ыпыпы",
-    "price": 3,
-    "category": "Дом и сад",
-    "brand": "ыпыпы",
-    "quantity": 3,
+    "id": "ec8b65c6-3046-4053-bcc2-d5fe590662fe",
+    "name": "Капитанская дочь",
+    "description": "екп",
+    "price": 1,
+    "category": "художественное",
+    "author": "Пушкин",
+    "quantity": 1,
     "image": "",
-    "createdAt": "2025-06-29T13:12:31.650Z",
-    "updatedAt": "2025-06-29T13:12:31.650Z"
+    "createdAt": "2025-07-22T19:00:19.991Z",
+    "updatedAt": "2025-07-22T19:00:19.991Z"
   },
   {
-    "id": "a6577893-17b1-49ba-8cf2-40843208eb73",
-    "name": "ыпыпыукп",
-    "description": "ыпыпыаее6",
-    "price": 3,
-    "category": "Дом и сад",
-    "brand": "ыпыпы",
-    "quantity": 3,
+    "id": "88ef21f8-af8d-4abd-afca-f711aabae2bd",
+    "name": "Горе от Ума",
+    "description": "екркер",
+    "price": 10,
+    "category": "художественное",
+    "author": "грибоедов",
+    "quantity": 1,
     "image": "",
-    "createdAt": "2025-06-29T13:12:47.644Z",
-    "updatedAt": "2025-06-30T14:53:37.089Z"
+    "createdAt": "2025-07-22T19:02:03.627Z",
+    "updatedAt": "2025-07-22T19:02:03.628Z"
   }
 ]

@@ -39,10 +39,7 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
 
   const handleAddToBasketClick = () => {
     if (onAddToBasket) {
-      console.log("Добавляем товар в корзину:", product);
       onAddToBasket(product);
-    } else {
-      console.warn("onAddToBasket не передан в ProductCard");
     }
   };
 
@@ -130,7 +127,7 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
             overflow="hidden"
             textOverflow="ellipsis"
           >
-            {product.brand}
+            {product.author}
           </Badge>
           <Badge
             colorScheme="green"

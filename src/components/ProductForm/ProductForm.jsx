@@ -2,13 +2,26 @@
 import React, { useState, useEffect } from "react";
 import "./ProductForm.css";
 
+const CATEGORIES = [
+  "практическое",
+  "учебное",
+  "информационное",
+  "художественное",
+  "научное",
+  "социально-политическое",
+  "рекламное",
+  "научно-популярное",
+  "для досуга",
+  "другое",
+];
+
 const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
-    brand: "",
+    author: "",
     quantity: "",
     image: "",
   });
@@ -28,7 +41,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
         description: product.description || "",
         price: product.price || "",
         category: product.category || "",
-        brand: product.brand || "",
+        author: product.author || "",
         quantity: product.quantity || "",
         image: product.image || "",
       });
@@ -53,14 +66,14 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
 
   const validate = () => {
     const e = {};
-    if (!formData.name.trim()) e.name = "Название товара обязательно";
+    if (!formData.name.trim()) e.name = "Название книги обязательно";
     if (!formData.description.trim())
-      e.description = "Описание товара обязательно";
+      e.description = "Описание книги обязательно";
     if (!formData.price || formData.price <= 0)
       e.price = "Укажите корректную цену";
     if (!formData.category) e.category = "Выберите категорию";
     if (!formData.quantity || formData.quantity < 0)
-      e.quantity = "Укажите количество товара";
+      e.quantity = "Укажите количество книг";
     return e;
   };
 
@@ -96,7 +109,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
 
         setAlert({
           status: "success",
-          message: isEdit ? "Товар успешно изменен" : "Товар успешно создан",
+          message: isEdit ? "Книга успешно изменена" : "Книга успешно создана",
         });
 
         setTimeout(() => {
@@ -109,7 +122,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
             description: "",
             price: "",
             category: "",
-            brand: "",
+            author: "",
             quantity: "",
             image: "",
           });
@@ -117,7 +130,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
       } else {
         const msg = Array.isArray(result.errors)
           ? result.errors.join(", ")
-          : result.message || "Ошибка при сохранении товара";
+          : result.message || "Ошибка при сохранении книги";
         setAlert({ status: "error", message: msg });
       }
     } catch {
@@ -136,7 +149,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
       description: "",
       price: "",
       category: "",
-      brand: "",
+      author: "",
       quantity: "",
       image: "",
     });
@@ -162,14 +175,14 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
         </button>
 
         <h2 className="form-title">
-          {isEdit ? "Редактирование товара" : "Создание нового товара"}
+          {isEdit ? "Редактирование книги" : "Создание новой книги"}
         </h2>
 
         <form onSubmit={handleSubmit} className="product-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name" className="form-label">
-                Название товара *
+                Название книги *
               </label>
               <input
                 type="text"
@@ -178,7 +191,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
                 value={formData.name}
                 onChange={handleChange}
                 className={`form-input ${errors.name ? "error" : ""}`}
-                placeholder="Введите название товара"
+                placeholder="Введите название книги"
               />
               {errors.name && (
                 <span className="error-message">{errors.name}</span>
@@ -198,7 +211,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
                 value={formData.description}
                 onChange={handleChange}
                 className={`form-textarea ${errors.description ? "error" : ""}`}
-                placeholder="Описание товара"
+                placeholder="Описание книги"
               />
               {errors.description && (
                 <span className="error-message">{errors.description}</span>
@@ -259,16 +272,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
                 className={`form-select ${errors.category ? "error" : ""}`}
               >
                 <option value="">Выберите категорию</option>
-                {[
-                  "Электроника",
-                  "Одежда",
-                  "Дом и сад",
-                  "Спорт",
-                  "Книги",
-                  "Красота",
-                  "Автотовары",
-                  "Другое",
-                ].map((c) => (
+                {CATEGORIES.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -279,17 +283,17 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
               )}
             </div>
             <div className="form-group">
-              <label htmlFor="brand" className="form-label">
-                Бренд
+              <label htmlFor="author" className="form-label">
+                Автор
               </label>
               <input
                 type="text"
-                id="brand"
-                name="brand"
-                value={formData.brand}
+                id="author"
+                name="author"
+                value={formData.author}
                 onChange={handleChange}
                 className="form-input"
-                placeholder="Бренд товара"
+                placeholder="Автор книги"
               />
             </div>
           </div>
@@ -340,7 +344,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style }) => {
                   : "Создание..."
                 : isEdit
                 ? "Сохранить"
-                : "Создать товар"}
+                : "Создать книгу"}
             </button>
           </div>
         </form>

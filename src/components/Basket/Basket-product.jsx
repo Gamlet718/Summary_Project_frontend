@@ -22,7 +22,7 @@ export function BasketProduct({ product, onQuantityChange, onDelete }) {
       <td style={{ color: "white", fontWeight: 600 }} >{product.name}</td>
       <td style={{ color: "white", fontWeight: 600 }} >{product.description}</td>
       <td style={{ color: "white", fontWeight: 600 }} >{product.category}</td>
-      <td style={{ color: "white", fontWeight: 600 }} >{product.brand}</td>
+      <td style={{ color: "white", fontWeight: 600 }} >{product.author}</td>
       <td style={{ color: "white", fontWeight: 600 }} >{product.price} ₽</td>
       <td>
         <input
@@ -48,7 +48,7 @@ export function BasketProduct({ product, onQuantityChange, onDelete }) {
             cursor: "pointer",
             fontWeight: "bold",
           }}
-          title="Удалить товар"
+          title="Удалить книгу"
         >
           ×
         </button>

@@ -1,10 +1,39 @@
-// Market.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useCart } from "../../contexts/CartContext";
 import ProductForm from "../../components/ProductForm/ProductForm";
 import { ProductCard } from "../../components/ProductCard/ProductCard";
 import { Notification } from "../../components/Notification/Notification";
+import BookFilter from "../../components/BookFilter/BookFilter";
 import "./Market.css";
+
+const applyBookFilter = (books, filter) => {
+  let filtered = [...books];
+  if (filter.name) {
+    filtered = filtered.filter((b) =>
+      b.name.toLowerCase().includes(filter.name.toLowerCase())
+    );
+  }
+  if (filter.categories && filter.categories.length > 0) {
+    filtered = filtered.filter((b) => filter.categories.includes(b.category));
+  }
+  if (filter.author) {
+    filtered = filtered.filter((b) =>
+      (b.author || "").toLowerCase().includes(filter.author.toLowerCase())
+    );
+  }
+  if (filter.priceFrom) {
+    filtered = filtered.filter((b) => Number(b.price) >= Number(filter.priceFrom));
+  }
+  if (filter.priceTo) {
+    filtered = filtered.filter((b) => Number(b.price) <= Number(filter.priceTo));
+  }
+  if (filter.sort === "asc") {
+    filtered = filtered.sort((a, b) => Number(a.price) - Number(b.price));
+  } else if (filter.sort === "desc") {
+    filtered = filtered.sort((a, b) => Number(b.price) - Number(a.price));
+  }
+  return filtered;
+};
 
 const Market = () => {
   const [products, setProducts] = useState([]);
@@ -12,6 +41,17 @@ const Market = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [notification, setNotification] = useState({ status: "", message: "" });
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  // Фильтр
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [bookFilter, setBookFilter] = useState({
+    name: "",
+    categories: [],
+    author: "",
+    priceFrom: "",
+    priceTo: "",
+    sort: "asc",
+  });
 
   const { addToCart, removeFromCart, setCart } = useCart();
 
@@ -24,7 +64,7 @@ const Market = () => {
     } catch (err) {
       setNotification({
         status: "error",
-        message: "Не удалось загрузить товары: " + err.message,
+        message: "Не удалось загрузить книги: " + err.message,
       });
     } finally {
       setLoading(false);
@@ -33,7 +73,7 @@ const Market = () => {
 
   const handleDelete = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    setNotification({ status: "error", message: "Товар успешно удалён" });
+    setNotification({ status: "error", message: "Книга успешно удалена" });
     removeFromCart(id);
   };
 
@@ -64,8 +104,8 @@ const Market = () => {
     setNotification({
       status: editingProduct ? "info" : "success",
       message: editingProduct
-        ? "Товар успешно изменен"
-        : "Товар успешно добавлен",
+        ? "Книга успешно изменена"
+        : "Книга успешно добавлена",
     });
   };
 
@@ -73,7 +113,7 @@ const Market = () => {
     addToCart(product);
     setNotification({
       status: "success",
-      message: "Товар успешно добавлен в корзину",
+      message: "Книга успешно добавлена в корзину",
     });
   };
 
@@ -86,21 +126,25 @@ const Market = () => {
       if (event.key === "Escape") {
         setIsFormVisible(false);
         setEditingProduct(null);
+        setIsFilterOpen(false);
       }
     };
-    if (isFormVisible) {
+    if (isFormVisible || isFilterOpen) {
       window.addEventListener("keydown", handleEsc);
     }
     return () => {
       window.removeEventListener("keydown", handleEsc);
     };
-  }, [isFormVisible]);
+  }, [isFormVisible, isFilterOpen]);
 
   if (loading) {
     return <div className="centered">Загрузка…</div>;
   }
 
   const closeNotification = () => setNotification({ status: "", message: "" });
+
+  // Фильтрация книг
+  const filteredProducts = applyBookFilter(products, bookFilter);
 
   return (
     <div className="market">
@@ -111,20 +155,64 @@ const Market = () => {
         style={{ fontSize: 14, minWidth: 220, padding: "10px 16px" }}
       />
 
-      <h2>Управление товарами</h2>
+      <h2>Управление книгами</h2>
 
-      {/* Кнопка видна только если форма не открыта */}
-      {!isFormVisible && (
-        <button
-          className="btn btn-primary btn-create-product"
-          onClick={() => {
-            setEditingProduct(null);
-            setIsFormVisible(true);
-          }}
-        >
-          Создать товар
-        </button>
-      )}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginBottom: 16,
+          position: "relative",
+          gap: 12,
+        }}
+      >
+        {/* Кнопка "Создать книгу" видна всегда, кроме случая, когда открыта форма создания */}
+        {!isFormVisible && (
+          <button
+            className="btn btn-primary btn-create-product"
+            onClick={() => {
+              setEditingProduct(null);
+              setIsFormVisible(true);
+            }}
+          >
+            Создать книгу
+          </button>
+        )}
+
+        {/* Кнопка "Применить фильтр" видна всегда, кроме случая, когда открыт фильтр */}
+        {!isFilterOpen && (
+          <button
+            className="btn btn-primary btn-create-product"
+            style={{ marginLeft: "auto" }}
+            onClick={() => setIsFilterOpen(true)}
+          >
+            Применить фильтр
+          </button>
+        )}
+
+        {/* Форма фильтра появляется под кнопкой "Применить фильтр" */}
+        {isFilterOpen && (
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "flex-end",
+              position: "absolute",
+              top: "100%",
+              right: 0,
+              zIndex: 100,
+            }}
+          >
+            <BookFilter
+              isOpen={isFilterOpen}
+              onClose={() => setIsFilterOpen(false)}
+              onApply={(filter) => setBookFilter(filter)}
+              initialFilter={bookFilter}
+            />
+          </div>
+        )}
+      </div>
 
       {isFormVisible && (
         <ProductForm
@@ -143,7 +231,7 @@ const Market = () => {
       )}
 
       <div className="market__grid">
-        {products.map((prod) => (
+        {filteredProducts.map((prod) => (
           <ProductCard
             key={prod.id}
             product={prod}

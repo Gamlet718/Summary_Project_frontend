@@ -16,7 +16,6 @@ const writeProducts = async (products) => {
   await fs.writeFile(DATA_FILE, JSON.stringify(products, null, 2), "utf8");
 };
 
-// Утилита для чтения данных
 const readProducts = async () => {
   try {
     const data = await fs.readFile(DATA_FILE, "utf8");
@@ -30,16 +29,15 @@ const readProducts = async () => {
   }
 };
 
-// Валидация данных товара
 const validateProduct = (product) => {
   const errors = [];
 
   if (!product.name || product.name.trim().length === 0) {
-    errors.push("Название товара обязательно");
+    errors.push("Название книги обязательно");
   }
 
   if (!product.description || product.description.trim().length === 0) {
-    errors.push("Описание товара обязательно");
+    errors.push("Описание книги обязательно");
   }
 
   if (!product.price || isNaN(product.price) || parseFloat(product.price) <= 0) {
@@ -47,7 +45,7 @@ const validateProduct = (product) => {
   }
 
   if (!product.category || product.category.trim().length === 0) {
-    errors.push("Категория товара обязательна");
+    errors.push("Категория книги обязательна");
   }
 
   if (
@@ -61,7 +59,7 @@ const validateProduct = (product) => {
   return errors;
 };
 
-// GET /api/products - Получить все товары
+// GET /api/products - Получить все книги
 router.get("/", async (req, res) => {
   try {
     const products = await readProducts();
@@ -73,13 +71,13 @@ router.get("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Ошибка при получении товаров",
+      message: "Ошибка при получении книг",
       error: error.message,
     });
   }
 });
 
-// GET /api/products/:id - Получить товар по ID
+// GET /api/products/:id - Получить книгу по ID
 router.get("/:id", async (req, res) => {
   try {
     const products = await readProducts();
@@ -88,7 +86,7 @@ router.get("/:id", async (req, res) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: "Товар не найден",
+        message: "Книга не найдена",
       });
     }
 
@@ -99,18 +97,17 @@ router.get("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Ошибка при получении товара",
+      message: "Ошибка при получении книги",
       error: error.message,
     });
   }
 });
 
-// POST /api/products - Создать новый товар
+// POST /api/products - Создать новую книгу
 router.post("/", async (req, res) => {
   try {
     const productData = req.body;
 
-    // Валидация
     const errors = validateProduct(productData);
     if (errors.length > 0) {
       return res.status(400).json({
@@ -120,51 +117,47 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // Создаем новый товар
     const newProduct = {
       id: uuidv4(),
       name: productData.name.trim(),
       description: productData.description.trim(),
       price: parseFloat(productData.price),
       category: productData.category.trim(),
-      brand: productData.brand ? productData.brand.trim() : "",
+      author: productData.author ? productData.author.trim() : "",
       quantity: parseInt(productData.quantity),
       image: productData.image || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    // Читаем существующие товары и добавляем новый
     const products = await readProducts();
     products.push(newProduct);
 
-    // Записываем обновленный список
     await writeProducts(products);
 
-    console.log(`✅ Создан новый товар: ${newProduct.name} (ID: ${newProduct.id})`);
+    console.log(`✅ Создана новая книга: ${newProduct.name} (ID: ${newProduct.id})`);
 
     res.status(201).json({
       success: true,
-      message: "Товар успешно создан",
+      message: "Книга успешно создана",
       data: newProduct,
     });
   } catch (error) {
-    console.error("Ошибка при создании товара:", error);
+    console.error("Ошибка при создании книги:", error);
     res.status(500).json({
       success: false,
-      message: "Ошибка при создании товара",
+      message: "Ошибка при создании книги",
       error: error.message,
     });
   }
 });
 
-// PUT /api/products/:id - Обновить товар
+// PUT /api/products/:id - Обновить книгу
 router.put("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
     const updateData = req.body;
 
-    // Валидация
     const errors = validateProduct(updateData);
     if (errors.length > 0) {
       return res.status(400).json({
@@ -180,18 +173,17 @@ router.put("/:id", async (req, res) => {
     if (productIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: "Товар не найден",
+        message: "Книга не найдена",
       });
     }
 
-    // Обновляем товар
     const updatedProduct = {
       ...products[productIndex],
       name: updateData.name.trim(),
       description: updateData.description.trim(),
       price: parseFloat(updateData.price),
       category: updateData.category.trim(),
-      brand: updateData.brand ? updateData.brand.trim() : "",
+      author: updateData.author ? updateData.author.trim() : "",
       quantity: parseInt(updateData.quantity),
       image: updateData.image || "",
       updatedAt: new Date().toISOString(),
@@ -200,23 +192,23 @@ router.put("/:id", async (req, res) => {
     products[productIndex] = updatedProduct;
     await writeProducts(products);
 
-    console.log(`✏️ Обновлен товар: ${updatedProduct.name} (ID: ${productId})`);
+    console.log(`✏️ Обновлена книга: ${updatedProduct.name} (ID: ${productId})`);
 
     res.json({
       success: true,
-      message: "Товар успешно обновлен",
+      message: "Книга успешно обновлена",
       data: updatedProduct,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Ошибка при обновлении товара",
+      message: "Ошибка при обновлении книги",
       error: error.message,
     });
   }
 });
 
-// DELETE /api/products/:id - Удалить товар
+// DELETE /api/products/:id - Удалить книгу
 router.delete("/:id", async (req, res) => {
   try {
     const productId = req.params.id;
@@ -226,7 +218,7 @@ router.delete("/:id", async (req, res) => {
     if (productIndex === -1) {
       return res.status(404).json({
         success: false,
-        message: "Товар не найден",
+        message: "Книга не найдена",
       });
     }
 
@@ -234,17 +226,17 @@ router.delete("/:id", async (req, res) => {
     products.splice(productIndex, 1);
     await writeProducts(products);
 
-    console.log(`🗑️ Удален товар: ${deletedProduct.name} (ID: ${productId})`);
+    console.log(`🗑️ Удалена книга: ${deletedProduct.name} (ID: ${productId})`);
 
     res.json({
       success: true,
-      message: "Товар успешно удален",
+      message: "Книга успешно удалена",
       data: deletedProduct,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Ошибка при удалении товара",
+      message: "Ошибка при удалении книги",
       error: error.message,
     });
   }
