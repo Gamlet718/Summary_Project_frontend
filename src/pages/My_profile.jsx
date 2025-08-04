@@ -1,9 +1,10 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
+import Profile from "../components/Profile/Profile";
 
 const My_profile = () => (
-  <Box >
-    <Heading>Главная страница</Heading>
-    <Text >My_profile</Text>
+  <Box>
+    <Heading mb={6}>Главная страница</Heading>
+    <Profile />
   </Box>
 );
 

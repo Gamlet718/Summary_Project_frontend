@@ -32,21 +32,21 @@ const Basket = () => {
 
   // Стили для кастомной кнопки
   const buttonStyle = {
-    backgroundColor: 'transparent',
-    border: '1px solid white',
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: '500',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    outline: 'none',
+    backgroundColor: "transparent",
+    border: "1px solid white",
+    color: "white",
+    padding: "8px 16px",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    outline: "none",
   };
 
   const buttonHoverStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    transform: 'translateY(-1px)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    transform: "translateY(-1px)",
   };
 
   return (
@@ -112,8 +112,8 @@ const Basket = () => {
                       Object.assign(e.target.style, buttonHoverStyle);
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.backgroundColor = "transparent";
+                      e.target.style.transform = "translateY(0)";
                     }}
                   >
                     Оплатить
@@ -122,7 +122,11 @@ const Basket = () => {
               </tr>
             </tfoot>
           </table>
-          <PaymentDrawer isOpen={isPaymentOpen} onClose={closePayment} totalSum={totalSum} />
+          <PaymentDrawer
+            isOpen={isPaymentOpen}
+            onClose={closePayment}
+            totalSum={totalSum}
+          />
         </>
       )}
     </div>

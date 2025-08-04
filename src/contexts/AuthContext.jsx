@@ -117,3 +117,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// Добавил этот хук для удобства!
+export const useAuth = () => React.useContext(AuthContext);

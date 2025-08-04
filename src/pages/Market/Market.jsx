@@ -4,6 +4,7 @@ import ProductForm from "../../components/ProductForm/ProductForm";
 import { ProductCard } from "../../components/ProductCard/ProductCard";
 import { Notification } from "../../components/Notification/Notification";
 import BookFilter from "../../components/BookFilter/BookFilter";
+import { useAuth } from "../../contexts/AuthContext";
 import "./Market.css";
 
 const applyBookFilter = (books, filter) => {
@@ -53,7 +54,13 @@ const Market = () => {
     sort: "asc",
   });
 
+  // Пагинация
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
   const { addToCart, removeFromCart, setCart } = useCart();
+const { user } = useAuth();
+const canCreateBook = user && (user.role === "admin" || user.role === "seller");
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -145,6 +152,13 @@ const Market = () => {
 
   // Фильтрация книг
   const filteredProducts = applyBookFilter(products, bookFilter);
+  const totalPages = Math.ceil(filteredProducts.length / pageSize);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handlePageChange = (page) => setCurrentPage(page);
 
   return (
     <div className="market">
@@ -167,7 +181,7 @@ const Market = () => {
           gap: 12,
         }}
       >
-        {/* Кнопка "Создать книгу" видна всегда, кроме случая, когда открыта форма создания */}
+        {/* Кнопка "Создать книгу" */}
         {!isFormVisible && (
           <button
             className="btn btn-primary btn-create-product"
@@ -175,12 +189,15 @@ const Market = () => {
               setEditingProduct(null);
               setIsFormVisible(true);
             }}
+            disabled={!canCreateBook}
+            title={!canCreateBook ? "Только продавец или админ может создавать книги" : ""}
+            style={!canCreateBook ? { opacity: 0.5, cursor: "not-allowed" } : {}}
           >
             Создать книгу
           </button>
         )}
 
-        {/* Кнопка "Применить фильтр" видна всегда, кроме случая, когда открыт фильтр */}
+        {/* Кнопка "Применить фильтр" */}
         {!isFilterOpen && (
           <button
             className="btn btn-primary btn-create-product"
@@ -191,7 +208,7 @@ const Market = () => {
           </button>
         )}
 
-        {/* Форма фильтра появляется под кнопкой "Применить фильтр" */}
+        {/* Форма фильтра */}
         {isFilterOpen && (
           <div
             style={{
@@ -231,7 +248,7 @@ const Market = () => {
       )}
 
       <div className="market__grid">
-        {filteredProducts.map((prod) => (
+        {paginatedProducts.map((prod) => (
           <ProductCard
             key={prod.id}
             product={prod}
@@ -241,6 +258,38 @@ const Market = () => {
           />
         ))}
       </div>
+
+      {totalPages > 1 && (
+        <div className="pagination" style={{ margin: "24px 0", textAlign: "center" }}>
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{ marginRight: 8 }}
+          >
+            {"<"}
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => handlePageChange(i + 1)}
+              disabled={currentPage === i + 1}
+              style={{
+                fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                margin: "0 4px",
+              }}
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{ marginLeft: 8 }}
+          >
+            {">"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

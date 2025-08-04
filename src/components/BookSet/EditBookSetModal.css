@@ -1,0 +1,106 @@
+.modal-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: #0006;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.modal-backdrop.modal-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-backdrop.modal-close {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.edit-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 36px;
+  min-width: 480px;
+  max-width: 95vw;
+  max-height: 96vh;
+  box-shadow: 0 4px 32px #0002;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.edit-modal.modal-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.edit-modal.modal-close {
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+}
+
+.edit-modal h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+}
+
+.edit-modal label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  gap: 4px;
+}
+
+.edit-modal input,
+.edit-modal textarea {
+  font-size: 1rem;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.edit-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.edit-modal-actions button {
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #eaf2fb;
+  color: #357ab8;
+  transition: background 0.2s;
+}
+.edit-modal-actions button[type="submit"] {
+  background: #4a90e2;
+  color: #fff;
+}
+.edit-modal-actions button:hover {
+  background: #d0e2fa;
+}
+
+.edit-books-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.edit-books-list input {
+  font-size: 0.98rem;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
