@@ -62,14 +62,15 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
       borderColor={borderColor}
       overflow="hidden"
       boxShadow="md"
-      maxW="100%"
-      minW="320px"
-      w="full"
       display="flex"
       flexDirection="column"
       transition="transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease"
       _hover={{ transform: "scale(1.015)", boxShadow: "lg" }}
       position="relative"
+      minWidth="290px"
+      maxWidth="320px"
+      width="100%"
+      flex="1 1 220px"
     >
       {showEditMessage && (
         <Box

@@ -1,5 +1,8 @@
 .product-card {
-  width: 280px;
+  width: 100%;
+  max-width: 320px;
+  min-width: 220px;
+  box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow: hidden;

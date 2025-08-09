@@ -1,4 +1,14 @@
 /* Market.css */
+
+.market__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9.5px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+  /* Нет justify-content, нет padding, нет max-width! */
+}
+
 .market {
   padding: 16px;
   font-family: Arial, sans-serif;
@@ -8,10 +18,45 @@
   margin-bottom: 16px;
 }
 
-.market__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
-  padding: 0 16px 8px 16px;
-  box-sizing: border-box;
+/* Пагинация */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin: 24px 0;
+}
+
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  border: none;
+  background: #f3f4f6;
+  color: #222;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 0 2px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.pagination button[disabled] {
+  background: #e5e7eb;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.pagination button.active,
+.pagination button:focus,
+.pagination button[aria-current="page"] {
+  background: #2563eb;
+  color: #fff;
+  font-weight: bold;
+  outline: none;
+}
+
+.pagination button:not([disabled]):hover {
+  background: #dbeafe;
+  color: #2563eb;
 }

@@ -5,6 +5,7 @@ import { ProductCard } from "../../components/ProductCard/ProductCard";
 import { Notification } from "../../components/Notification/Notification";
 import BookFilter from "../../components/BookFilter/BookFilter";
 import { useAuth } from "../../contexts/AuthContext";
+import Pagination from "../../components/ui/Pagination";
 import "./Market.css";
 
 const applyBookFilter = (books, filter) => {
@@ -59,8 +60,8 @@ const Market = () => {
   const pageSize = 20;
 
   const { addToCart, removeFromCart, setCart } = useCart();
-const { user } = useAuth();
-const canCreateBook = user && (user.role === "admin" || user.role === "seller");
+  const { user } = useAuth();
+  const canCreateBook = user && (user.role === "admin" || user.role === "seller");
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -144,13 +145,7 @@ const canCreateBook = user && (user.role === "admin" || user.role === "seller");
     };
   }, [isFormVisible, isFilterOpen]);
 
-  if (loading) {
-    return <div className="centered">Загрузка…</div>;
-  }
-
-  const closeNotification = () => setNotification({ status: "", message: "" });
-
-  // Фильтрация книг
+  // --- ОТЛАДКА ---
   const filteredProducts = applyBookFilter(products, bookFilter);
   const totalPages = Math.ceil(filteredProducts.length / pageSize);
   const paginatedProducts = filteredProducts.slice(
@@ -158,7 +153,25 @@ const canCreateBook = user && (user.role === "admin" || user.role === "seller");
     currentPage * pageSize
   );
 
-  const handlePageChange = (page) => setCurrentPage(page);
+  // Сброс страницы если фильтр уменьшил количество страниц
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) {
+      return;
+    }
+    setCurrentPage(page);
+  };
+
+  if (loading) {
+    return <div className="centered">Загрузка…</div>;
+  }
+
+  const closeNotification = () => setNotification({ status: "", message: "" });
 
   return (
     <div className="market">
@@ -259,36 +272,13 @@ const canCreateBook = user && (user.role === "admin" || user.role === "seller");
         ))}
       </div>
 
-      {totalPages > 1 && (
-        <div className="pagination" style={{ margin: "24px 0", textAlign: "center" }}>
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            style={{ marginRight: 8 }}
-          >
-            {"<"}
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => handlePageChange(i + 1)}
-              disabled={currentPage === i + 1}
-              style={{
-                fontWeight: currentPage === i + 1 ? "bold" : "normal",
-                margin: "0 4px",
-              }}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            style={{ marginLeft: 8 }}
-          >
-            {">"}
-          </button>
-        </div>
+      {/* Пагинация появляется, если карточек 20 и более */}
+      {filteredProducts.length >= pageSize && (
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );
