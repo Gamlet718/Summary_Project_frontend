@@ -1,4 +1,3 @@
-// ProductCard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -12,9 +11,16 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { FaTrash, FaEdit, FaShoppingCart } from "react-icons/fa";
+import { useAuth } from "../../contexts/AuthContext";
 
 export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
   const [showEditMessage, setShowEditMessage] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+    }
+  }, [user, product.ownerId]);
 
   const handleDelete = async () => {
     try {
@@ -53,6 +59,20 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
   const bg = "white";
   const borderColor = "gray.200";
   const textColor = "gray.600";
+
+  // --- ЛОГИКА КНОПОК ---
+  const isAdmin = user && user.role === "admin";
+  const isSellerOwner = user && user.role === "seller" && user.uid === product.ownerId;
+  const isBuyer = user && user.role === "buyer";
+
+  // --- ОТЛАДКА ---
+  let debugReason = "";
+  if (isAdmin) debugReason = "Показываем кнопки: админ";
+  else if (isSellerOwner) debugReason = "Показываем кнопки: продавец-владелец";
+  else if (isBuyer) debugReason = "Скрываем кнопки: покупатель";
+  else debugReason = "Скрываем кнопки: не владелец/не админ";
+  useEffect(() => {
+  }, [debugReason]);
 
   return (
     <Box
@@ -204,6 +224,7 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
           </Text>
 
           <Stack direction="row" spacing={3}>
+            {/* Кнопка "В корзину" всегда показывается */}
             <Button
               size="sm"
               colorScheme="teal"
@@ -217,32 +238,37 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
             >
               В корзину
             </Button>
-            <Button
-              size="sm"
-              colorScheme="blue"
-              leftIcon={<FaEdit />}
-              onClick={handleEditClick}
-              borderRadius="full"
-              boxShadow="md"
-              _hover={{ bg: "#dedfff", boxShadow: "xl" }}
-              transition="all 0.3s ease"
-              cursor="pointer"
-            >
-              Ред.
-            </Button>
-            <Button
-              size="sm"
-              colorScheme="red"
-              leftIcon={<FaTrash />}
-              onClick={handleDelete}
-              borderRadius="full"
-              boxShadow="md"
-              _hover={{ bg: "#ffdede", boxShadow: "xl" }}
-              transition="all 0.3s ease"
-              cursor="pointer"
-            >
-              Удал.
-            </Button>
+            {/* Кнопки "Ред." и "Удал." только для админа и владельца-продавца */}
+            {(isAdmin || isSellerOwner) && (
+              <>
+                <Button
+                  size="sm"
+                  colorScheme="blue"
+                  leftIcon={<FaEdit />}
+                  onClick={handleEditClick}
+                  borderRadius="full"
+                  boxShadow="md"
+                  _hover={{ bg: "#dedfff", boxShadow: "xl" }}
+                  transition="all 0.3s ease"
+                  cursor="pointer"
+                >
+                  Ред.
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="red"
+                  leftIcon={<FaTrash />}
+                  onClick={handleDelete}
+                  borderRadius="full"
+                  boxShadow="md"
+                  _hover={{ bg: "#ffdede", boxShadow: "xl" }}
+                  transition="all 0.3s ease"
+                  cursor="pointer"
+                >
+                  Удал.
+                </Button>
+              </>
+            )}
           </Stack>
         </HStack>
       </VStack>

@@ -1,13 +1,19 @@
 .book-filter-overlay {
-  position: relative;
-  width: 100%;
+  position: fixed; /* Было relative */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: flex-end;
+  align-items: flex-start;
   z-index: 100;
+  background: rgba(24, 27, 34, 0.85); /* затемнение фона */
+  overflow: auto;
 }
 
 .book-filter-modal {
-  margin-top: 12px;
+  margin-top: 32px;
   min-width: 340px;
   max-width: 400px;
   background: #23272f;
@@ -76,6 +82,8 @@
   font-size: 1rem;
   outline: none;
   transition: border 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 .book-filter-input:focus,
 .book-filter-select:focus {
@@ -101,6 +109,15 @@
   accent-color: #6be6b4;
   width: 16px;
   height: 16px;
+}
+
+.book-filter-price-inputs {
+  display: flex;
+  gap: 8px;
+}
+.book-filter-price-inputs input {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .book-filter-actions {
@@ -145,5 +162,9 @@
     min-width: 90vw;
     max-width: 98vw;
     padding: 18px 8vw 18px 8vw;
+  }
+  .book-filter-price-inputs {
+    flex-direction: column;
+    gap: 8px;
   }
 }

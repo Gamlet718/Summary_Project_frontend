@@ -6,7 +6,6 @@
   gap: 9.5px;
   margin-bottom: 32px;
   box-sizing: border-box;
-  /* Нет justify-content, нет padding, нет max-width! */
 }
 
 .market {
@@ -14,8 +13,82 @@
   font-family: Arial, sans-serif;
 }
 
-.btn-create-product {
+/* Кнопки "Создать товар" и "Применить фильтр" */
+.btn-create-product,
+.btn-create-product-filter {
   margin-bottom: 16px;
+  background: #964b00;
+  background: linear-gradient(
+    90deg,
+    rgba(150, 75, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  z-index: 10;
+  min-width: 120px;
+  box-sizing: border-box;
+  font-size: 16px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition:
+    left 0.3s cubic-bezier(.4,0,.2,1),
+    right 0.3s cubic-bezier(.4,0,.2,1),
+    top 0.3s cubic-bezier(.4,0,.2,1),
+    width 0.3s cubic-bezier(.4,0,.2,1),
+    box-shadow 0.3s cubic-bezier(.4,0,.2,1),
+    transform 0.3s cubic-bezier(.4,0,.2,1),
+    opacity 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+.btn-create-product {
+  position: static;
+  left: 5px;
+}
+.btn-create-product.sticky {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: scale(1.04) translateY(8px);
+  opacity: 0.98;
+}
+
+.btn-create-product-filter {
+  position: static;
+  right: 5px;
+}
+.btn-create-product-filter.sticky {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: scale(1.04) translateY(8px);
+  opacity: 0.98;
+}
+
+/* Адаптивность для кнопок и сетки */
+@media (max-width: 900px) {
+  .market__grid {
+    gap: 7px;
+  }
+  .btn-create-product,
+  .btn-create-product-filter {
+    font-size: 15px;
+    padding: 9px 14px;
+    min-width: 100px;
+  }
+}
+@media (max-width: 600px) {
+  .market {
+    padding: 8px;
+  }
+  .market__grid {
+    gap: 5px;
+  }
+  .btn-create-product,
+  .btn-create-product-filter {
+    font-size: 14px;
+    padding: 8px 10px;
+    min-width: 80px;
+    border-radius: 6px;
+  }
+  .btn-create-product.sticky,
+  .btn-create-product-filter.sticky {
+    transform: scale(1.02) translateY(4px);
+  }
 }
 
 /* Пагинация */
@@ -38,7 +111,16 @@
   margin: 0 2px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+@media (max-width: 600px) {
+  .pagination button {
+    min-width: 28px;
+    height: 28px;
+    font-size: 13px;
+    border-radius: 5px;
+  }
 }
 
 .pagination button[disabled] {

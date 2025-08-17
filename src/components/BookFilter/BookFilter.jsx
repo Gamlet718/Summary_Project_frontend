@@ -24,6 +24,7 @@ export default function BookFilter({
   onClose,
   onApply,
   initialFilter,
+  onReset, // новый проп для сброса фильтра
 }) {
   const [filter, setFilter] = useState({
     name: "",
@@ -56,24 +57,29 @@ export default function BookFilter({
     });
   };
 
+  // Сброс фильтра: если есть onReset, вызываем его, иначе стандартное поведение
   const handleReset = () => {
-    setFilter({
-      name: "",
-      categories: [],
-      author: "",
-      priceFrom: "",
-      priceTo: "",
-      sort: "asc",
-    });
-    onApply({
-      name: "",
-      categories: [],
-      author: "",
-      priceFrom: "",
-      priceTo: "",
-      sort: "asc",
-    });
-    onClose();
+    if (typeof onReset === "function") {
+      onReset();
+    } else {
+      setFilter({
+        name: "",
+        categories: [],
+        author: "",
+        priceFrom: "",
+        priceTo: "",
+        sort: "asc",
+      });
+      onApply({
+        name: "",
+        categories: [],
+        author: "",
+        priceFrom: "",
+        priceTo: "",
+        sort: "asc",
+      });
+      onClose();
+    }
   };
 
   const handleSubmit = (e) => {
@@ -143,7 +149,7 @@ export default function BookFilter({
           </div>
           <div className="book-filter-row">
             <label className="book-filter-label">Цена (₽)</label>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="book-filter-price-inputs">
               <input
                 type="number"
                 name="priceFrom"

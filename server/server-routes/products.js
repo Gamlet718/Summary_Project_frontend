@@ -1,3 +1,4 @@
+// product.js
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -56,6 +57,10 @@ const validateProduct = (product) => {
     errors.push("Количество должно быть неотрицательным числом");
   }
 
+  if (!product.ownerId || typeof product.ownerId !== "string" || product.ownerId.trim() === "") {
+    errors.push("ownerId обязателен");
+  }
+
   return errors;
 };
 
@@ -105,6 +110,7 @@ router.get("/:id", async (req, res) => {
 
 // POST /api/products - Создать новую книгу
 router.post("/", async (req, res) => {
+  console.log("POST /api/products body:", req.body);
   try {
     const productData = req.body;
 
@@ -126,6 +132,7 @@ router.post("/", async (req, res) => {
       author: productData.author ? productData.author.trim() : "",
       quantity: parseInt(productData.quantity),
       image: productData.image || "",
+      ownerId: productData.ownerId, // <--- ВАЖНО!
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -186,6 +193,7 @@ router.put("/:id", async (req, res) => {
       author: updateData.author ? updateData.author.trim() : "",
       quantity: parseInt(updateData.quantity),
       image: updateData.image || "",
+      ownerId: updateData.ownerId, // <--- ВАЖНО!
       updatedAt: new Date().toISOString(),
     };
 

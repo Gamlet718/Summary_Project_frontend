@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+/**
+ * @file Market.jsx
+ * @module pages/Market/Market
+ * @description Страница управления книгами (маркет).
+ */
+
+import React, { useEffect, useState } from "react";
 import { useCart } from "../../contexts/CartContext";
 import ProductForm from "../../components/ProductForm/ProductForm";
 import { ProductCard } from "../../components/ProductCard/ProductCard";
@@ -6,40 +12,44 @@ import { Notification } from "../../components/Notification/Notification";
 import BookFilter from "../../components/BookFilter/BookFilter";
 import { useAuth } from "../../contexts/AuthContext";
 import Pagination from "../../components/ui/Pagination";
+import { applyBookFilter } from "../../utils/applyBookFilter";
+import { useStickyButton } from "../../hooks/useStickyButton";
+import { usePaginatedProducts } from "../../hooks/usePaginatedProducts";
+import { useProducts } from "../../hooks/useProducts";
+import { useModalEscClose } from "../../hooks/useModalEscClose";
 import "./Market.css";
 
-const applyBookFilter = (books, filter) => {
-  let filtered = [...books];
-  if (filter.name) {
-    filtered = filtered.filter((b) =>
-      b.name.toLowerCase().includes(filter.name.toLowerCase())
-    );
-  }
-  if (filter.categories && filter.categories.length > 0) {
-    filtered = filtered.filter((b) => filter.categories.includes(b.category));
-  }
-  if (filter.author) {
-    filtered = filtered.filter((b) =>
-      (b.author || "").toLowerCase().includes(filter.author.toLowerCase())
-    );
-  }
-  if (filter.priceFrom) {
-    filtered = filtered.filter((b) => Number(b.price) >= Number(filter.priceFrom));
-  }
-  if (filter.priceTo) {
-    filtered = filtered.filter((b) => Number(b.price) <= Number(filter.priceTo));
-  }
-  if (filter.sort === "asc") {
-    filtered = filtered.sort((a, b) => Number(a.price) - Number(b.price));
-  } else if (filter.sort === "desc") {
-    filtered = filtered.sort((a, b) => Number(b.price) - Number(a.price));
-  }
-  return filtered;
-};
+/**
+ * Возвращает стили для sticky-кнопки.
+ * @param {Object} rect - Положение и размеры кнопки.
+ * @param {string} side - Сторона ("left" или "right").
+ * @returns {Object} - Стили.
+ */
+function getStickyBtnStyle(rect, side) {
+  if (!rect) return {};
+  const isMobile = window.innerWidth < 600;
+  return {
+    position: "fixed",
+    top: 0,
+    [side]: side === "left" ? `${rect.left}px` : `${rect.right}px`,
+    width: isMobile
+      ? Math.min(rect.width, window.innerWidth - 16) + "px"
+      : `${rect.width}px`,
+    minWidth: isMobile
+      ? Math.min(rect.width, window.innerWidth - 16) + "px"
+      : `${rect.width}px`,
+    boxSizing: "border-box",
+    zIndex: 100,
+    maxWidth: isMobile ? "95vw" : undefined,
+  };
+}
 
+/**
+ * Компонент страницы маркет.
+ * @returns {JSX.Element}
+ */
 const Market = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // --- Состояния ---
   const [editingProduct, setEditingProduct] = useState(null);
   const [notification, setNotification] = useState({ status: "", message: "" });
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -55,41 +65,80 @@ const Market = () => {
     sort: "asc",
   });
 
-  // Пагинация
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
-
+  // --- Контексты ---
   const { addToCart, removeFromCart, setCart } = useCart();
   const { user } = useAuth();
   const canCreateBook = user && (user.role === "admin" || user.role === "seller");
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/products");
-      const { data } = await res.json();
-      setProducts(data);
-    } catch (err) {
-      setNotification({
-        status: "error",
-        message: "Не удалось загрузить книги: " + err.message,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // --- Sticky-кнопки ---
+  const createBtnSticky = useStickyButton("left");
+  const filterBtnSticky = useStickyButton("right");
 
+  // --- Загрузка продуктов ---
+  const { products, loading, fetchProducts, setProducts } = useProducts();
+
+  // --- Фильтрация и пагинация ---
+  const filteredProducts = applyBookFilter(products, bookFilter);
+  const {
+    paginatedProducts,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+  } = usePaginatedProducts(filteredProducts, 20);
+
+  // --- Эффекты ---
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        createBtnSticky.updateRect();
+        filterBtnSticky.updateRect();
+      }, 0);
+    }
+    // eslint-disable-next-line
+  }, [loading, isFormVisible, isFilterOpen]);
+
+  useModalEscClose(isFormVisible || isFilterOpen, () => {
+    setIsFormVisible(false);
+    setEditingProduct(null);
+    setIsFilterOpen(false);
+  });
+
+  // --- Обработчики ---
+  /**
+   * Удаляет книгу.
+   * @param {string|number} id - ID книги.
+   */
   const handleDelete = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     setNotification({ status: "error", message: "Книга успешно удалена" });
     removeFromCart(id);
   };
 
+  /**
+   * Открывает форму создания книги.
+   */
+  const openCreateForm = () => {
+    setEditingProduct(null);
+    setIsFormVisible(true);
+  };
+
+  /**
+   * Открывает форму редактирования книги.
+   * @param {Object} product - Книга.
+   */
   const handleEdit = (product) => {
     setEditingProduct(product);
     setIsFormVisible(true);
   };
 
+  /**
+   * Обработка успешного сохранения книги.
+   * @param {Object} savedProduct - Сохраненная книга.
+   */
   const handleFormSuccess = (savedProduct) => {
     setEditingProduct(null);
     setIsFormVisible(false);
@@ -117,6 +166,10 @@ const Market = () => {
     });
   };
 
+  /**
+   * Добавляет книгу в корзину.
+   * @param {Object} product - Книга.
+   */
   const handleAddToCart = (product) => {
     addToCart(product);
     setNotification({
@@ -125,41 +178,10 @@ const Market = () => {
     });
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  useEffect(() => {
-    const handleEsc = (event) => {
-      if (event.key === "Escape") {
-        setIsFormVisible(false);
-        setEditingProduct(null);
-        setIsFilterOpen(false);
-      }
-    };
-    if (isFormVisible || isFilterOpen) {
-      window.addEventListener("keydown", handleEsc);
-    }
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-    };
-  }, [isFormVisible, isFilterOpen]);
-
-  // --- ОТЛАДКА ---
-  const filteredProducts = applyBookFilter(products, bookFilter);
-  const totalPages = Math.ceil(filteredProducts.length / pageSize);
-  const paginatedProducts = filteredProducts.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
-  // Сброс страницы если фильтр уменьшил количество страниц
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [totalPages, currentPage]);
-
+  /**
+   * Обработка смены страницы.
+   * @param {number} page - Номер страницы.
+   */
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) {
       return;
@@ -167,11 +189,15 @@ const Market = () => {
     setCurrentPage(page);
   };
 
+  /**
+   * Закрывает уведомление.
+   */
+  const closeNotification = () => setNotification({ status: "", message: "" });
+
+  // --- Рендер ---
   if (loading) {
     return <div className="centered">Загрузка…</div>;
   }
-
-  const closeNotification = () => setNotification({ status: "", message: "" });
 
   return (
     <div className="market">
@@ -197,14 +223,16 @@ const Market = () => {
         {/* Кнопка "Создать книгу" */}
         {!isFormVisible && (
           <button
-            className="btn btn-primary btn-create-product"
-            onClick={() => {
-              setEditingProduct(null);
-              setIsFormVisible(true);
-            }}
+            ref={createBtnSticky.btnRef}
+            className={`btn btn-primary btn-create-product${createBtnSticky.isSticky ? " sticky" : ""}`}
+            onClick={openCreateForm}
             disabled={!canCreateBook}
             title={!canCreateBook ? "Только продавец или админ может создавать книги" : ""}
-            style={!canCreateBook ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+            style={
+              createBtnSticky.isSticky && createBtnSticky.btnRect
+                ? getStickyBtnStyle(createBtnSticky.btnRect, "left")
+                : {}
+            }
           >
             Создать книгу
           </button>
@@ -213,8 +241,13 @@ const Market = () => {
         {/* Кнопка "Применить фильтр" */}
         {!isFilterOpen && (
           <button
-            className="btn btn-primary btn-create-product"
-            style={{ marginLeft: "auto" }}
+            ref={filterBtnSticky.btnRef}
+            className={`btn btn-primary btn-create-product-filter${filterBtnSticky.isSticky ? " sticky" : ""}`}
+            style={
+              filterBtnSticky.isSticky && filterBtnSticky.btnRect
+                ? getStickyBtnStyle(filterBtnSticky.btnRect, "right")
+                : { marginLeft: "auto" }
+            }
             onClick={() => setIsFilterOpen(true)}
           >
             Применить фильтр
@@ -223,40 +256,26 @@ const Market = () => {
 
         {/* Форма фильтра */}
         {isFilterOpen && (
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "flex-end",
-              position: "absolute",
-              top: "100%",
-              right: 0,
-              zIndex: 100,
-            }}
-          >
-            <BookFilter
-              isOpen={isFilterOpen}
-              onClose={() => setIsFilterOpen(false)}
-              onApply={(filter) => setBookFilter(filter)}
-              initialFilter={bookFilter}
-            />
-          </div>
+          <BookFilter
+            isOpen={isFilterOpen}
+            onClose={() => setIsFilterOpen(false)}
+            onApply={(filter) => setBookFilter(filter)}
+            initialFilter={bookFilter}
+          />
         )}
       </div>
 
+      {/* Модальное окно для создания/редактирования */}
       {isFormVisible && (
         <ProductForm
           key={editingProduct?.id ?? "new"}
           product={editingProduct}
-          onSuccess={(savedProduct) => {
-            handleFormSuccess(savedProduct);
-            setIsFormVisible(false);
-          }}
+          onSuccess={handleFormSuccess}
           onCancel={() => {
             setIsFormVisible(false);
             setEditingProduct(null);
           }}
-          style={{ width: 320 }}
+          modal
         />
       )}
 
@@ -273,7 +292,7 @@ const Market = () => {
       </div>
 
       {/* Пагинация появляется, если карточек 20 и более */}
-      {filteredProducts.length >= pageSize && (
+      {filteredProducts.length >= 20 && (
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
