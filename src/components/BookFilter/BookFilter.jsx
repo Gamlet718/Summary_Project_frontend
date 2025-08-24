@@ -1,6 +1,16 @@
+/**
+ * @file BookFilter.jsx
+ * @module BookFilter
+ * @description Модальное окно фильтрации книг по различным параметрам.
+ */
+
 import React, { useState, useEffect } from "react";
 import "./BookFilter.css";
 
+/**
+ * Массив доступных категорий книг.
+ * @type {string[]}
+ */
 const CATEGORIES = [
   "практическое",
   "учебное",
@@ -14,11 +24,40 @@ const CATEGORIES = [
   "другое",
 ];
 
+/**
+ * Массив опций сортировки книг.
+ * @type {{value: string, label: string}[]}
+ */
 const SORT_OPTIONS = [
   { value: "asc", label: "От дешевых к дорогим" },
   { value: "desc", label: "От дорогих к дешевым" },
 ];
 
+/**
+ * @typedef {Object} BookFilterProps
+ * @property {boolean} isOpen - Флаг открытия модального окна фильтра.
+ * @property {function} onClose - Функция закрытия модального окна.
+ * @property {function} onApply - Функция применения фильтра.
+ * @property {Object} [initialFilter] - Начальные значения фильтра.
+ * @property {function} [onReset] - Функция сброса фильтра.
+ */
+
+/**
+ * @typedef {Object} FilterState
+ * @property {string} name - Название книги.
+ * @property {string[]} categories - Выбранные категории.
+ * @property {string} author - Имя автора.
+ * @property {string|number} priceFrom - Минимальная цена.
+ * @property {string|number} priceTo - Максимальная цена.
+ * @property {string} sort - Тип сортировки.
+ */
+
+/**
+ * Модальное окно фильтрации книг.
+ *
+ * @param {BookFilterProps} props - Пропсы компонента.
+ * @returns {JSX.Element|null} Модальное окно фильтра или null, если закрыто.
+ */
 export default function BookFilter({
   isOpen,
   onClose,
@@ -26,6 +65,10 @@ export default function BookFilter({
   initialFilter,
   onReset, // новый проп для сброса фильтра
 }) {
+  /**
+   * Состояние фильтра.
+   * @type {[FilterState, function]}
+   */
   const [filter, setFilter] = useState({
     name: "",
     categories: [],
@@ -35,15 +78,26 @@ export default function BookFilter({
     sort: "asc",
   });
 
+  /**
+   * Синхронизация состояния фильтра с начальными значениями при открытии.
+   */
   useEffect(() => {
     if (initialFilter) setFilter(initialFilter);
   }, [initialFilter, isOpen]);
 
+  /**
+   * Обработчик изменения текстовых и числовых полей.
+   * @param {React.ChangeEvent<HTMLInputElement|HTMLSelectElement>} e
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFilter((prev) => ({ ...prev, [name]: value }));
   };
 
+  /**
+   * Обработчик изменения чекбоксов категорий.
+   * @param {React.ChangeEvent<HTMLInputElement>} e
+   */
   const handleCategoryChange = (e) => {
     const { value, checked } = e.target;
     setFilter((prev) => {
@@ -57,7 +111,10 @@ export default function BookFilter({
     });
   };
 
-  // Сброс фильтра: если есть onReset, вызываем его, иначе стандартное поведение
+  /**
+   * Сброс фильтра к значениям по умолчанию.
+   * Если передан onReset, вызывает его, иначе сбрасывает локально.
+   */
   const handleReset = () => {
     if (typeof onReset === "function") {
       onReset();
@@ -82,6 +139,10 @@ export default function BookFilter({
     }
   };
 
+  /**
+   * Применение фильтра и закрытие модального окна.
+   * @param {React.FormEvent<HTMLFormElement>} e
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     onApply(filter);
@@ -103,6 +164,7 @@ export default function BookFilter({
         </button>
         <h2 className="book-filter-title">Фильтр книг</h2>
         <form onSubmit={handleSubmit} className="book-filter-form">
+          {/* Название книги */}
           <div className="book-filter-row">
             <label className="book-filter-label" htmlFor="name">
               Название книги
@@ -117,6 +179,7 @@ export default function BookFilter({
               placeholder="Введите название книги"
             />
           </div>
+          {/* Категории */}
           <div className="book-filter-row">
             <label className="book-filter-label">Категории</label>
             <div className="book-filter-categories">
@@ -133,6 +196,7 @@ export default function BookFilter({
               ))}
             </div>
           </div>
+          {/* Автор */}
           <div className="book-filter-row">
             <label className="book-filter-label" htmlFor="author">
               Автор
@@ -147,6 +211,7 @@ export default function BookFilter({
               placeholder="Введите автора"
             />
           </div>
+          {/* Цена */}
           <div className="book-filter-row">
             <label className="book-filter-label">Цена (₽)</label>
             <div className="book-filter-price-inputs">
@@ -170,6 +235,7 @@ export default function BookFilter({
               />
             </div>
           </div>
+          {/* Сортировка */}
           <div className="book-filter-row">
             <label className="book-filter-label">Сортировка по цене</label>
             <select
@@ -185,6 +251,7 @@ export default function BookFilter({
               ))}
             </select>
           </div>
+          {/* Кнопки действий */}
           <div className="book-filter-actions">
             <button
               type="button"

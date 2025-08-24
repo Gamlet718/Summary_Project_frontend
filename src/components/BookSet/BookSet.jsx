@@ -1,11 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "./BookSet.css";
 import EditBookSetModal from "./EditBookSetModal";
-import { AuthContext } from "../../contexts/AuthContext";
 
-function BookSet({ bookSet, onEdit, onBuy }) {
+function BookSet({ bookSet, onEdit, onBuy, canEdit }) {
   const [editOpen, setEditOpen] = useState(false);
-  const { user } = useContext(AuthContext);
 
   return (
     <div className="bookset-card">
@@ -13,7 +11,7 @@ function BookSet({ bookSet, onEdit, onBuy }) {
       <div className="bookset-content">
         <div className="bookset-header">
           <h2>{bookSet.title}</h2>
-          {user?.role === "admin" && (
+          {canEdit && (
             <button className="edit-btn" onClick={() => setEditOpen(true)} title="Редактировать">
               <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M15.232 5.232l-10 10V17h1.768l10-10-1.768-1.768zM17.414 2.586a2 2 0 0 0-2.828 0l-1.172 1.172 2.828 2.828 1.172-1.172a2 2 0 0 0 0-2.828z"/>
@@ -32,7 +30,7 @@ function BookSet({ bookSet, onEdit, onBuy }) {
           </ul>
         </div>
         <div className="bookset-meta">
-          <span>📚 {bookSet.count} книг</span>
+          <span>📚 {bookSet.count} книг(и)</span>
           <span>📅 {bookSet.year}</span>
           <span>🌍 {bookSet.country}</span>
         </div>

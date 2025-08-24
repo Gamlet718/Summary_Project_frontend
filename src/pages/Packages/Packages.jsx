@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import BookSet from "../../components/BookSet/BookSet";
 import PaymentDrawer from "../../components/PaymentDrawer/PaymentDrawer"; // путь поправь если другой
 import "./Packages.css";
+import { useAuth } from "../../contexts/AuthContext"; // добавлено!
 
 // Месяцы на русском
 const months = [
@@ -192,6 +193,10 @@ function Packages() {
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [paymentSum, setPaymentSum] = useState(0);
 
+  // Получаем пользователя и его роль
+  const { user } = useAuth();
+  const canEdit = user && user.role === "admin";
+
   // Текущий месяц
   const now = new Date();
   const monthName = months[now.getMonth()];
@@ -218,6 +223,7 @@ function Packages() {
             bookSet={set}
             onEdit={handleEditBookSet}
             onBuy={handleBuy}
+            canEdit={canEdit} // <-- передаем право на редактирование
           />
         ))}
       </div>

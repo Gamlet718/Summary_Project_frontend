@@ -117,16 +117,14 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
 
       if (res.ok && result.success) {
         const saved = result.data;
-        onSuccess && onSuccess(saved);
 
         setAlert({
           status: "success",
           message: isEdit ? "Книга успешно изменена" : "Книга успешно создана",
         });
 
-        setTimeout(() => {
-          onSuccess && onSuccess(saved);
-        }, 1500);
+        // Вызываем onSuccess ОДИН раз
+        onSuccess && onSuccess(saved);
 
         if (!isEdit) {
           setFormData({
@@ -384,7 +382,6 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
       </div>
     );
   }
-
 };
 
 export default ProductForm;
