@@ -29,97 +29,141 @@ export const HeaderBottom = ({ onRequireAuth }) => {
 
   return (
     <div className="header-bottom">
-      <div className="container">
-        {/* Социальные ссылки */}
-        <ul className="social-list">
-          <li>
-            <a
-              href="https://www.facebook.com/ваша-страница"
-              className="social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ion-icon name="logo-facebook"></ion-icon>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://twitter.com/ваш-профиль"
-              className="social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.youtube.com/ваш-канал"
-              className="social-link"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ion-icon name="logo-youtube"></ion-icon>
-            </a>
-          </li>
-        </ul>
-
-        {/* Главное навигационное меню */}
-        <nav className="navbar" data-navbar>
-          <ul className="navbar-list">
+      <div
+        className="container"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        {/* Левая область (соц.ссылки) */}
+        <div
+          className="hb-left"
+          style={{ flex: 1, display: "flex", alignItems: "center" }}
+        >
+          <ul className="social-list">
             <li>
-              <Link to="/home" className="navbar-link">
-                Дом
-              </Link>
-            </li>
-            <li>
-              <button
-                className="navbar-link btn-link"
-                onClick={() => handleProtectedClick("/my_profile")}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              <a
+                href="https://www.facebook.com/ваша-страница"
+                className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Мой профиль
-              </button>
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
             </li>
             <li>
-              <button
-                className="navbar-link btn-link"
-                onClick={() => handleProtectedClick("/market")}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              <a
+                href="https://twitter.com/ваш-профиль"
+                className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Маркет
-              </button>
+                <ion-icon name="logo-twitter"></ion-icon>
+              </a>
             </li>
             <li>
-              <button
-                className="navbar-link btn-link"
-                onClick={() => handleProtectedClick("/packages")}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+              <a
+                href="https://www.youtube.com/ваш-канал"
+                className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Наборы
-              </button>
-            </li>
-            <li>
-              <Link to="/gallery" className="navbar-link">
-                Галерея
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact" className="navbar-link">
-                Контакты
-              </Link>
+                <ion-icon name="logo-youtube"></ion-icon>
+              </a>
             </li>
           </ul>
-        </nav>
+        </div>
 
-        {/* Кнопка «Корзина» */}
-        <button
-          className="btn btn-primary"
-          onClick={() => handleProtectedClick("/basket")}
-          style={{ cursor: "pointer" }}
+        {/* Центр (главное меню), всегда по центру */}
+        <div
+          className="hb-center"
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          Корзина
-        </button>
+          <nav className="navbar" data-navbar>
+            <ul className="navbar-list">
+              <li>
+                <Link to="/home" className="navbar-link">
+                  Дом
+                </Link>
+              </li>
+
+              {isAuthenticated && (
+                <li>
+                  <button
+                    className="navbar-link btn-link"
+                    onClick={() => handleProtectedClick("/my_profile")}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  >
+                    Мой профиль
+                  </button>
+                </li>
+              )}
+
+              {isAuthenticated && (
+                <li>
+                  <button
+                    className="navbar-link btn-link"
+                    onClick={() => handleProtectedClick("/market")}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  >
+                    Маркет
+                  </button>
+                </li>
+              )}
+
+              {isAuthenticated && (
+                <li>
+                  <button
+                    className="navbar-link btn-link"
+                    onClick={() => handleProtectedClick("/packages")}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                  >
+                    Наборы
+                  </button>
+                </li>
+              )}
+
+              <li>
+                <Link to="/gallery" className="navbar-link">
+                  Галерея
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/contact" className="navbar-link">
+                  Контакты
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        {/* Правая область (корзина или пустое место) */}
+        <div
+          className="hb-right"
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          {isAuthenticated && (
+            <button
+              className="btn btn-primary"
+              onClick={() => handleProtectedClick("/basket")}
+              style={{ cursor: "pointer" }}
+            >
+              Корзина
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

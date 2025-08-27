@@ -1,0 +1,103 @@
+/* src/pages/Home.css */
+:root {
+  --white: #ffffff;
+  --paper: #f7f1e6;        /* бежевый (цвет бумаги) */
+  --paper-2: #efe6d8;      /* слегка темнее бежевый */
+  --ink: #1a1a1a;          /* чёрный (чернила) */
+  --brown: #6b4f3b;        /* коричневый */
+  --light-brown: #b58863;  /* светло-коричневый */
+}
+
+/* Область страницы без заднего фона */
+.home-hero {
+  padding-block: clamp(56px, 8vw, 96px);
+  color: var(--ink);
+}
+
+/* Контейнер */
+.home-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Карточка "лист бумаги" */
+.home-card {
+  background: linear-gradient(180deg, var(--white) 0%, var(--paper) 100%);
+  border: 1px solid var(--paper-2);
+  border-radius: 18px;
+  padding: clamp(24px, 4vw, 40px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовок в книжной палитре */
+.home-title {
+  font-size: clamp(32px, 6vw, 48px);
+  line-height: 1.1;
+  color: var(--brown);
+  letter-spacing: 0.2px;
+}
+
+/* Подзаголовок */
+.home-subtitle {
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: rgba(26, 26, 26, 0.85); /* чёрный с прозрачностью */
+}
+
+/* Цитата */
+.home-quote {
+  font-style: italic;
+  color: var(--brown);
+  border-left: 4px solid var(--light-brown);
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--paper-2);
+}
+
+/* Кнопка входа — сочная, но «книжная» */
+.home-login-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: var(--white) !important;
+  background-image: linear-gradient(90deg, var(--light-brown), var(--brown));
+  box-shadow: 0 10px 24px rgba(107, 79, 59, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+/* Бликовый эффект в рамках палитры */
+.home-login-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120px 60px at 10% 10%, rgba(255, 255, 255, 0.35), transparent 40%),
+    radial-gradient(160px 80px at 80% 0%, rgba(255, 255, 255, 0.22), transparent 40%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Hover/Active/Focus */
+.home-login-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 38px rgba(107, 79, 59, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+  filter: saturate(1.05);
+}
+
+.home-login-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 10px 18px rgba(107, 79, 59, 0.3);
+  filter: saturate(1);
+}
+
+.home-login-btn:focus-visible {
+  outline: 3px solid var(--light-brown);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(181, 136, 99, 0.25);
+}

@@ -1,0 +1,250 @@
+/* src/components/BookFacts/BookFacts.css */
+/* Цвета берем из :root (Home.css) */
+.book-facts {
+  margin-top: clamp(28px, 5vw, 56px);
+  display: grid;
+  place-items: center;
+}
+
+.book-wrap {
+  width: min(920px, 95vw);
+}
+
+/* Размер «книги» через переменные */
+.book {
+  --book-w: min(920px, 95vw);
+  --book-h: calc(var(--book-w) * 0.58);
+  position: relative;
+  width: var(--book-w);
+  height: var(--book-h);
+  margin-inline: auto;
+  perspective: 1800px;
+  transform-style: preserve-3d;
+  transition: filter 0.2s ease;
+}
+
+/* Лёгкая тень под книгой */
+.book::after {
+  content: "";
+  position: absolute;
+  inset: auto 6% -10% 6%;
+  height: 20%;
+  background: radial-gradient(50% 55% at 50% 50%, rgba(0, 0, 0, 0.18), transparent 70%);
+  filter: blur(10px);
+  z-index: 0;
+}
+
+/* Общие стили страницы */
+.page {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(180deg, var(--white), var(--paper));
+  border: 1px solid var(--paper-2);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Текстура бумаги */
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120px 80px at 15% 10%, rgba(181, 136, 99, 0.06), transparent 50%),
+    radial-gradient(160px 90px at 85% 0%, rgba(107, 79, 59, 0.05), transparent 50%),
+    repeating-linear-gradient(180deg, transparent 0 24px, rgba(0, 0, 0, 0.02) 24px 25px);
+  pointer-events: none;
+}
+
+/* Внутренний контейнер */
+.page-inner {
+  position: relative;
+  padding: clamp(18px, 3vw, 28px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2.2vw, 14px);
+  color: var(--ink);
+}
+
+/* Прокручиваемый контент внутри страницы */
+.page-content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 6px; /* чтобы скролл не съедал текст */
+}
+
+/* Левая страница (титул) */
+.page-left {
+  left: 0;
+  border-right: none;
+  border-radius: 14px 0 0 14px;
+}
+
+/* Имитация «среза страниц» у левой страницы */
+.page-left::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 12px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Правая страница (перелистываемая) */
+.page-right {
+  left: 50%;
+  border-left: none;
+  border-radius: 0 14px 14px 0;
+  transform-origin: left center;
+  transform: rotateY(0deg);
+  transition: transform 800ms cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 300ms ease;
+  z-index: 2;
+}
+
+/* Имитация «среза страниц» у правой страницы */
+.page-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -11px;
+  width: 11px;
+  height: 100%;
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.05), transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Анимация перелистывания */
+.book.turn-forward .page-right {
+  transform: rotateY(-180deg);
+  box-shadow: -8px 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+.book.turn-back .page-right {
+  transform: rotateY(180deg);
+  box-shadow: -8px 10px 26px rgba(0, 0, 0, 0.08);
+}
+
+/* Заголовки и текст */
+.book-title {
+  font-size: clamp(22px, 4.2vw, 32px);
+  color: var(--brown);
+  letter-spacing: 0.2px;
+}
+
+.book-lead {
+  font-size: clamp(14px, 2.5vw, 16px);
+  color: rgba(26, 26, 26, 0.9);
+  max-width: 48ch;
+}
+
+.decoration-line {
+  margin-top: auto;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--light-brown), transparent);
+  opacity: 0.7;
+}
+
+.page-heading {
+  font-size: clamp(18px, 3.2vw, 22px);
+  color: var(--brown);
+}
+
+.page-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: rgba(26, 26, 26, 0.92);
+}
+
+.page-list .fact-item {
+  margin: 6px 0;
+  line-height: 1.6;
+  font-size: clamp(14px, 2.2vw, 16px);
+}
+
+/* Низ страницы: индикатор */
+.page-bottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  color: rgba(26, 26, 26, 0.65);
+  font-size: 13px;
+}
+
+/* Кнопки управления */
+.book-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: clamp(14px, 2.4vw, 18px);
+}
+
+.turn-btn {
+  position: relative;
+  border: none;
+  cursor: pointer;
+  padding: 12px 22px;
+  border-radius: 9999px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--white);
+  background-image: linear-gradient(90deg, var(--light-brown), var(--brown));
+  box-shadow: 0 10px 24px rgba(107, 79, 59, 0.35), inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+}
+
+.turn-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120px 60px at 10% 10%, rgba(255, 255, 255, 0.35), transparent 40%),
+              radial-gradient(160px 80px at 80% 0%, rgba(255, 255, 255, 0.22), transparent 40%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.turn-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 16px 38px rgba(107, 79, 59, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.06);
+  filter: saturate(1.05);
+}
+
+.turn-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 10px 18px rgba(107, 79, 59, 0.3);
+}
+
+.turn-btn:focus-visible {
+  outline: 3px solid var(--light-brown);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(181, 136, 99, 0.25);
+}
+
+.turn-btn[disabled],
+.turn-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 10px 24px rgba(107, 79, 59, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* Адаптив: уменьшаем высоту книги на узких экранах */
+@media (max-width: 480px) {
+  .book {
+    --book-w: 95vw;
+    --book-h: calc(var(--book-w) * 0.62);
+  }
+}
