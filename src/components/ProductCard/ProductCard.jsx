@@ -1,54 +1,77 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Image,
-  Badge,
-  Text,
-  Heading,
-  Button,
-  HStack,
-  VStack,
-  Stack,
-} from "@chakra-ui/react";
-import { FaTrash, FaEdit, FaShoppingCart } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from "react";
+import { Box, Text, Heading, HStack, VStack, Stack } from "@chakra-ui/react";
 import { useAuth } from "../../contexts/AuthContext";
+import { ProductImage } from "./ProductImage";
+import { ProductBadges } from "./ProductBadges";
+import { ProductActions } from "./ProductActions";
+import { useProductPermissions } from "../../hooks/useProductPermissions";
 
+/**
+ * Карточка товара.
+ *
+ * Отображает изображение, бейджи (автор и категория),
+ * название, описание, цену, количество и набор действий (в корзину, редактирование, удаление).
+ * Кнопки "Ред." и "Удал." доступны только админу и продавцу-владельцу товара.
+ *
+ * @param {Object} props
+ * @param {import("./types").Product} props.product - Товар для отображения.
+ * @param {(productId: string) => void} props.onDelete - Колбэк при успешном удалении товара.
+ * @param {(product: import("./types").Product) => void} props.onEdit - Колбэк для начала редактирования товара.
+ * @param {(product: import("./types").Product) => void} [props.onAddToBasket] - Колбэк добавления товара в корзину.
+ * @returns {JSX.Element}
+ */
 export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
   const [showEditMessage, setShowEditMessage] = useState(false);
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-    }
-  }, [user, product.ownerId]);
+  const { canManage } = useProductPermissions(user, product);
 
-  const handleDelete = async () => {
+  // Цвета/стили компонента
+  const bg = "white";
+  const borderColor = "gray.200";
+  const textColor = "gray.600";
+
+  /**
+   * Обработчик удаления товара.
+   * Выполняет запрос DELETE и уведомляет родителя через onDelete.
+   *
+   * @returns {Promise<void>}
+   */
+  const handleDelete = useCallback(async () => {
     try {
-      const res = await fetch(`/api/products/${product.id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/products/${product.id}`, { method: "DELETE" });
       const { success, message } = await res.json();
+
       if (success) {
         onDelete(product.id);
       } else {
         alert("Ошибка: " + message);
       }
     } catch (err) {
-      alert("Ошибка: " + err.message);
+      alert("Ошибка: " + (err?.message || "Неизвестная ошибка"));
     }
-  };
+  }, [onDelete, product.id]);
 
-  const handleEditClick = () => {
+  /**
+   * Обработчик начала редактирования.
+   * Показывает краткий инфо-баннер и передает товар наверх через onEdit.
+   */
+  const handleEditClick = useCallback(() => {
     setShowEditMessage(true);
     onEdit(product);
-  };
+  }, [onEdit, product]);
 
-  const handleAddToBasketClick = () => {
+  /**
+   * Обработчик "В корзину".
+   * Безопасно вызывает переданный проп.
+   */
+  const handleAddToBasketClick = useCallback(() => {
     if (onAddToBasket) {
       onAddToBasket(product);
     }
-  };
+  }, [onAddToBasket, product]);
 
+  // Скрываем всплывающее сообщение через 1 сек.
   useEffect(() => {
     if (showEditMessage) {
       const timer = setTimeout(() => setShowEditMessage(false), 1000);
@@ -56,23 +79,12 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
     }
   }, [showEditMessage]);
 
-  const bg = "white";
-  const borderColor = "gray.200";
-  const textColor = "gray.600";
-
-  // --- ЛОГИКА КНОПОК ---
-  const isAdmin = user && user.role === "admin";
-  const isSellerOwner = user && user.role === "seller" && user.uid === product.ownerId;
-  const isBuyer = user && user.role === "buyer";
-
-  // --- ОТЛАДКА ---
-  let debugReason = "";
-  if (isAdmin) debugReason = "Показываем кнопки: админ";
-  else if (isSellerOwner) debugReason = "Показываем кнопки: продавец-владелец";
-  else if (isBuyer) debugReason = "Скрываем кнопки: покупатель";
-  else debugReason = "Скрываем кнопки: не владелец/не админ";
+  // Заглушка-эффект на изменение пользователя/владельца (оставлено для возможной логики)
   useEffect(() => {
-  }, [debugReason]);
+    if (user) {
+      // Здесь можно выполнить трекинг/логирование или обновление данных пользователя и владельца
+    }
+  }, [user, product.ownerId]);
 
   return (
     <Box
@@ -113,59 +125,14 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
         </Box>
       )}
 
-      <Box
-        h="180px"
-        overflow="hidden"
-        borderBottom="1px solid"
+      <ProductImage
+        src={product.image}
+        alt={product.name}
         borderColor={borderColor}
-      >
-        <Image
-          src={
-            product.image && product.image.trim() !== "" ? product.image : null
-          }
-          alt={product.name}
-          objectFit="cover"
-          w="100%"
-          h="100%"
-          fallbackSrc="https://placehold.co/320x180?text=No+Image"
-          transition="transform 0.3s ease"
-          _hover={{ transform: "scale(1.05)" }}
-        />
-      </Box>
+      />
 
       <VStack align="start" spacing={2} p={4} flex="1" minH="220px" w="full">
-        <HStack spacing={2} flexWrap="wrap" maxW="full" w="full">
-          <Badge
-            colorScheme="purple"
-            fontWeight="semibold"
-            fontSize="0.75rem"
-            px={2}
-            py={1}
-            borderRadius="md"
-            noOfLines={1}
-            maxW="50%"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {product.author}
-          </Badge>
-          <Badge
-            colorScheme="green"
-            fontWeight="semibold"
-            fontSize="0.75rem"
-            px={2}
-            py={1}
-            borderRadius="md"
-            noOfLines={1}
-            maxW="50%"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {product.category}
-          </Badge>
-        </HStack>
+        <ProductBadges author={product.author} category={product.category} />
 
         <Heading
           size="md"
@@ -190,10 +157,7 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
           overflow="hidden"
           textOverflow="ellipsis"
           display="-webkit-box"
-          style={{
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}
+          style={{ WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
         >
           {product.description}
         </Text>
@@ -224,51 +188,12 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
           </Text>
 
           <Stack direction="row" spacing={3}>
-            {/* Кнопка "В корзину" всегда показывается */}
-            <Button
-              size="sm"
-              colorScheme="teal"
-              leftIcon={<FaShoppingCart />}
-              borderRadius="full"
-              boxShadow="md"
-              _hover={{ bg: "#e1ffde", boxShadow: "xl" }}
-              transition="all 0.3s ease"
-              cursor="pointer"
-              onClick={handleAddToBasketClick}
-            >
-              В корзину
-            </Button>
-            {/* Кнопки "Ред." и "Удал." только для админа и владельца-продавца */}
-            {(isAdmin || isSellerOwner) && (
-              <>
-                <Button
-                  size="sm"
-                  colorScheme="blue"
-                  leftIcon={<FaEdit />}
-                  onClick={handleEditClick}
-                  borderRadius="full"
-                  boxShadow="md"
-                  _hover={{ bg: "#dedfff", boxShadow: "xl" }}
-                  transition="all 0.3s ease"
-                  cursor="pointer"
-                >
-                  Ред.
-                </Button>
-                <Button
-                  size="sm"
-                  colorScheme="red"
-                  leftIcon={<FaTrash />}
-                  onClick={handleDelete}
-                  borderRadius="full"
-                  boxShadow="md"
-                  _hover={{ bg: "#ffdede", boxShadow: "xl" }}
-                  transition="all 0.3s ease"
-                  cursor="pointer"
-                >
-                  Удал.
-                </Button>
-              </>
-            )}
+            <ProductActions
+              onAddToBasket={handleAddToBasketClick}
+              onEdit={handleEditClick}
+              onDelete={handleDelete}
+              canManage={canManage}
+            />
           </Stack>
         </HStack>
       </VStack>
