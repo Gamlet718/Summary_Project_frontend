@@ -10,7 +10,7 @@ const Market = lazy(() => import("../pages/Market/Market"));
 const Packages = lazy(() => import("../pages/Packages/Packages"));
 const Gallery = lazy(() => import("../pages/Gallery"));
 const Contact = lazy(() => import("../pages/Contact"));
-const Basket = lazy(() => import("../pages/Basket"));
+const Basket = lazy(() => import("../pages/Basket/Basket"));
 
 export const AppRoutes = ({ onRequireAuth }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);

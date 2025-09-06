@@ -1,29 +1,18 @@
+// src/components/Notification.jsx
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import "../responsive.css";
 
-const STATUS_STYLES = {
-  success: {
-    bgColor: "#d4edda",
-    color: "#155724",
-    title: "Добавление",
-  },
-  error: {
-    bgColor: "#f8d7da",
-    color: "#721c24",
-    title: "Удаление",
-  },
-  info: {
-    bgColor: "#cce5ff",
-    color: "#004085",
-    title: "Редактирование",
-  },
-  warning: {
-    bgColor: "#fff3cd",
-    color: "#856404",
-    title: "Внимание",
-  },
+const STATUS_COLORS = {
+  success: { bgColor: "#d4edda", color: "#155724" },
+  error: { bgColor: "#f8d7da", color: "#721c24" },
+  info: { bgColor: "#cce5ff", color: "#004085" },
+  warning: { bgColor: "#fff3cd", color: "#856404" },
 };
 
 export const Notification = ({ status, message, onClose }) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (!message) return;
 
@@ -36,12 +25,21 @@ export const Notification = ({ status, message, onClose }) => {
 
   if (!message) return null;
 
-  const { bgColor, color, title } = STATUS_STYLES[status] || STATUS_STYLES.info;
+  const { bgColor, color } = STATUS_COLORS[status] || STATUS_COLORS.info;
+
+  const titleMap = {
+    success: t("notification_title_success", { defaultValue: "Добавление" }),
+    error: t("notification_title_error", { defaultValue: "Удаление" }),
+    info: t("notification_title_info", { defaultValue: "Редактирование" }),
+    warning: t("notification_title_warning", { defaultValue: "Внимание" }),
+  };
+  const title = titleMap[status] || titleMap.info;
 
   return (
     <div
       role="alert"
       aria-live="assertive"
+      className="notification"
       style={{
         position: "fixed",
         top: 20,
@@ -68,7 +66,7 @@ export const Notification = ({ status, message, onClose }) => {
       </div>
       <button
         onClick={onClose}
-        aria-label="Закрыть уведомление"
+        aria-label={t("notification_close_aria", { defaultValue: "Закрыть уведомление" })}
         style={{
           marginLeft: 16,
           background: "transparent",

@@ -1,12 +1,35 @@
-# React + Vite
+Книжный интернет‑магазин
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиент‑серверный проект интернет‑магазина книг с локализациями, интеграцией Firebase и компонентной библиотекой Chakra UI.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Сторонние ресурсы
 
-## Expanding the ESLint configuration
+Firebase — бэкенд‑сервисы (аутентификация/БД/хранилище)
+i18n (i18next + i18next-parser) — локализация и парсинг ключей переводов
+Chakra UI — UI‑компоненты
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Требования
+
+Node.js LTS
+npm
+Конфигурация Firebase (env‑переменные)
+Установка
+
+Установите зависимости в корне:
+npm install
+Установите зависимости сервера:
+cd server
+npm install
+cd ..
+Порядок запуска
+
+Извлечь ключи переводов i18n (из корня проекта):
+npx i18next -c i18next-parser.config.cjs 'src/**/*.{js,jsx,ts,tsx}'
+Сгенерировать/обновить перевод на английский:
+node scripts/translate.js en
+Поднять сервер (в отдельном терминале из папки server):
+cd server
+npm run server
+Запустить фронтенд (из корневой папки, в другом терминале):
+npm run dev

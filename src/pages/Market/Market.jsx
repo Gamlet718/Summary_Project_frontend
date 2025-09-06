@@ -205,7 +205,7 @@ const Market = () => {
         style={{ fontSize: 14, minWidth: 220, padding: "10px 16px" }}
       />
 
-      <h2>Управление книгами</h2>
+      <h2 className="market__title">Управление книгами</h2>
 
       <div
         style={{

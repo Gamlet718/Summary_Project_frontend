@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 import { FaTrash, FaEdit, FaShoppingCart } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 /**
  * Кнопки действий для товара.
@@ -15,6 +16,8 @@ import { FaTrash, FaEdit, FaShoppingCart } from "react-icons/fa";
  * @returns {JSX.Element}
  */
 export function ProductActions({ onAddToBasket, onEdit, onDelete, canManage }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <Button
@@ -28,7 +31,7 @@ export function ProductActions({ onAddToBasket, onEdit, onDelete, canManage }) {
         cursor="pointer"
         onClick={onAddToBasket}
       >
-        В корзину
+        {t("В КОРЗ")}
       </Button>
 
       {canManage && (
@@ -44,7 +47,7 @@ export function ProductActions({ onAddToBasket, onEdit, onDelete, canManage }) {
             transition="all 0.3s ease"
             cursor="pointer"
           >
-            Ред.
+            {t("РЕД")}
           </Button>
           <Button
             size="sm"
@@ -57,7 +60,7 @@ export function ProductActions({ onAddToBasket, onEdit, onDelete, canManage }) {
             transition="all 0.3s ease"
             cursor="pointer"
           >
-            Удал.
+            {t("УДАЛ")}
           </Button>
         </>
       )}

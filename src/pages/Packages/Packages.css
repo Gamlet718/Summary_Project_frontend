@@ -31,3 +31,150 @@
   flex-direction: column;
   gap: 24px;
 }
+
+/* Обёртка карточки для мобильного масштабирования и задания общих правил */
+.bookset-item {
+  /* Ничего на десктопе — выглядит как раньше */
+}
+
+/* Планшеты и уже: делаем карточки вертикальными */
+@media (max-width: 768px) {
+  .packages-page {
+    padding: 24px 14px 56px 14px;
+  }
+
+  .month-label {
+    top: 16px;
+    left: 16px;
+    font-size: 1rem;
+    padding: 5px 12px;
+    border-radius: 6px;
+  }
+
+  .packages-title {
+    font-size: 1.6rem;
+    margin-bottom: 24px;
+  }
+
+  .booksets-list {
+    gap: 18px;
+  }
+
+  /* Принудительно переводим корневой контейнер BookSet в вертикальный стек */
+  .bookset-item > * {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    gap: 12px;
+  }
+
+  /* Избавляемся от любых фиксированных ширин внутри карточки */
+  .bookset-item * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Кнопки компактнее */
+  .bookset-item button,
+  .bookset-item [role="button"],
+  .bookset-item a.button {
+    padding: 7px 12px;
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  /* Картинка на всю ширину, авто-высота */
+  .bookset-item img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+}
+
+/* Телефоны */
+@media (max-width: 480px) {
+  .packages-page {
+    padding: 18px 12px 44px 12px;
+  }
+
+  /* Убираем абсолют у лейбла месяца, чтобы не перекрывал заголовок */
+  .month-label {
+    position: static;
+    display: inline-block;
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .packages-title {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+  }
+
+  .booksets-list {
+    gap: 14px;
+  }
+
+  /* Акцент на компактность содержимого карточек */
+  .bookset-item {
+    font-size: 0.95rem;
+  }
+
+  .bookset-item button,
+  .bookset-item [role="button"],
+  .bookset-item a.button {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    min-height: 34px;
+    border-radius: 8px;
+  }
+
+  .bookset-item img {
+    max-height: 140px;
+    border-radius: 8px;
+  }
+}
+
+/* Маленькие телефоны */
+@media (max-width: 360px) {
+  .packages-page {
+    padding: 16px 10px 40px 10px;
+  }
+
+  .month-label {
+    font-size: 0.9rem;
+    padding: 4px 8px;
+  }
+
+  .packages-title {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+
+  .booksets-list {
+    gap: 12px;
+  }
+
+  .bookset-item {
+    font-size: 0.9rem;
+  }
+
+  .bookset-item button,
+  .bookset-item [role="button"],
+  .bookset-item a.button {
+    padding: 5px 9px;
+    font-size: 0.85rem;
+    min-height: 32px;
+    border-radius: 7px;
+  }
+
+  .bookset-item img {
+    max-height: 120px;
+    border-radius: 8px;
+  }
+}

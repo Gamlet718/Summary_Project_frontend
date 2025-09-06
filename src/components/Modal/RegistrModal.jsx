@@ -10,6 +10,8 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
+import "../responsive.css";
 
 export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   const {
@@ -21,6 +23,7 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
   } = useForm();
 
   const { register: registerUser } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -36,11 +39,17 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
   const passwordValidation = (v) => {
     const ok = v.length >= 10 && (v.match(/\d/g) || []).length >= 3;
-    return ok || "Пароль минимум 10 символов и 3 цифры";
+    return (
+      ok ||
+      t("validation_password_requirements", {
+        defaultValue: "Пароль минимум 10 символов и 3 цифры",
+      })
+    );
   };
 
   const matchesPrev = (v) =>
-    v === getValues().password1 || "Пароли не совпадают";
+    v === getValues().password1 ||
+    t("validation_password_mismatch", { defaultValue: "Пароли не совпадают" });
 
   const onSubmit = async (data) => {
     const success = await registerUser({
@@ -51,7 +60,11 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
     if (success) {
       onClose();
     } else {
-      alert("Пользователь с таким email уже существует");
+      alert(
+        t("error_user_exists", {
+          defaultValue: "Пользователь с таким email уже существует",
+        })
+      );
     }
   };
 
@@ -61,51 +74,67 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
       <Portal>
         <Dialog.Backdrop style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)" }} />
         <Dialog.Positioner onClick={(e) => e.target === e.currentTarget && onClose()}>
-          <Dialog.Content style={{ background: "#fff", borderRadius: 6, padding: 20, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}>
+          <Dialog.Content
+            className="auth-modal"
+            style={{ background: "#fff", borderRadius: 6, padding: 20, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+          >
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Dialog.Header><Dialog.Title>Регистрация</Dialog.Title></Dialog.Header>
+              <Dialog.Header>
+                <Dialog.Title>
+                  {t("modal_register_title", { defaultValue: "Регистрация" })}
+                </Dialog.Title>
+              </Dialog.Header>
+
               <Dialog.Body pb="4">
                 <Stack gap="4" maxW="sm" align="flex-start">
                   <Field.Root invalid={!!errors.firstName}>
-                    <Field.Label htmlFor="firstName">First Name</Field.Label>
+                    <Field.Label htmlFor="firstName">
+                      {t("form_first_name_label", { defaultValue: "First Name" })}
+                    </Field.Label>
                     <Input
                       id="firstName"
-                      placeholder="First Name"
+                      placeholder={t("form_first_name_placeholder", { defaultValue: "First Name" })}
                       {...register("firstName", {
-                        required: "Required",
+                        required: t("validation_required", { defaultValue: "Required" }),
                         validate: (v) =>
-                          /^[A-Za-zА-Яа-яЁё\s-]+$/.test(v) || "Строковые символы",
+                          /^[A-Za-zА-Яа-яЁё\s-]+$/.test(v) ||
+                          t("validation_letters_only", { defaultValue: "Строковые символы" }),
                       })}
                     />
                     <Field.ErrorText>{errors.firstName?.message}</Field.ErrorText>
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.lastName}>
-                    <Field.Label htmlFor="lastName">Last Name</Field.Label>
+                    <Field.Label htmlFor="lastName">
+                      {t("form_last_name_label", { defaultValue: "Last Name" })}
+                    </Field.Label>
                     <Input
                       id="lastName"
-                      placeholder="Last Name"
+                      placeholder={t("form_last_name_placeholder", { defaultValue: "Last Name" })}
                       {...register("lastName", {
-                        required: "Required",
+                        required: t("validation_required", { defaultValue: "Required" }),
                         validate: (v) =>
-                          /^[A-Za-zА-Яа-яЁё\s-]+$/.test(v) || "Строковые символы",
+                          /^[A-Za-zА-Яа-яЁё\s-]+$/.test(v) ||
+                          t("validation_letters_only", { defaultValue: "Строковые символы" }),
                       })}
                     />
                     <Field.ErrorText>{errors.lastName?.message}</Field.ErrorText>
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.phone}>
-                    <Field.Label htmlFor="phone">Phone</Field.Label>
+                    <Field.Label htmlFor="phone">
+                      {t("form_phone_label", { defaultValue: "Phone" })}
+                    </Field.Label>
                     <Input
                       id="phone"
-                      placeholder="+7 (999) 999-99-99"
+                      placeholder={t("form_phone_placeholder", { defaultValue: "+7 (999) 999-99-99" })}
                       {...register("phone", {
-                        required: "Phone is required",
+                        required: t("validation_phone_required", { defaultValue: "Phone is required" }),
                         validate: (v) => {
                           const digits = v.replace(/\D/g, "");
                           return (
-                            digits.length === 11 && digits.startsWith("7") ||
-                            "Введите корректный номер телефона"
+                            (digits.length === 11 && digits.startsWith("7")) ||
+                            t("validation_phone_invalid", { defaultValue: "Введите корректный номер телефона" })
                           );
                         },
                       })}
@@ -115,29 +144,33 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
                   <Field.Root invalid={!!errors.email}>
                     <Field.Label htmlFor="email">
-                      Email <Field.RequiredIndicator />
+                      {t("form_email_label", { defaultValue: "Email" })} <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
                       id="email"
-                      placeholder="Enter your email"
+                      placeholder={t("form_email_placeholder", { defaultValue: "Enter your email" })}
                       {...register("email", {
-                        required: "Required",
+                        required: t("validation_required", { defaultValue: "Required" }),
                         pattern: {
                           value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Неверный email",
+                          message: t("validation_email_invalid", { defaultValue: "Неверный email" }),
                         },
                       })}
                     />
                     <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
-                    <Field.HelperText>We'll never share your email.</Field.HelperText>
+                    <Field.HelperText>
+                      {t("form_email_helper", { defaultValue: "We'll never share your email." })}
+                    </Field.HelperText>
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.role}>
-                    <Field.Label htmlFor="role">Роль</Field.Label>
+                    <Field.Label htmlFor="role">
+                      {t("form_role_label", { defaultValue: "Роль" })}
+                    </Field.Label>
                     <select
                       id="role"
                       {...register("role", {
-                        required: "Выберите роль",
+                        required: t("validation_role_required", { defaultValue: "Выберите роль" }),
                       })}
                       style={{
                         width: "100%",
@@ -146,23 +179,29 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                         border: errors.role ? "1px solid red" : "1px solid #ccc",
                       }}
                     >
-                      <option value="">Выберите роль</option>
-                      <option value="buyer">Покупатель</option>
-                      <option value="seller">Продавец</option>
+                      <option value="">
+                        {t("form_role_placeholder", { defaultValue: "Выберите роль" })}
+                      </option>
+                      <option value="buyer">
+                        {t("form_role_buyer", { defaultValue: "Покупатель" })}
+                      </option>
+                      <option value="seller">
+                        {t("form_role_seller", { defaultValue: "Продавец" })}
+                      </option>
                     </select>
                     <Field.ErrorText>{errors.role?.message}</Field.ErrorText>
                   </Field.Root>
 
                   <Field.Root invalid={!!errors.password1}>
                     <Field.Label htmlFor="password1">
-                      Password <Field.RequiredIndicator />
+                      {t("form_password_label", { defaultValue: "Password" })} <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
                       id="password1"
                       type="password"
-                      placeholder="Enter your password"
+                      placeholder={t("form_password_placeholder", { defaultValue: "Enter your password" })}
                       {...register("password1", {
-                        required: "Required",
+                        required: t("validation_required", { defaultValue: "Required" }),
                         validate: passwordValidation,
                       })}
                     />
@@ -171,14 +210,14 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
 
                   <Field.Root invalid={!!errors.password2}>
                     <Field.Label htmlFor="password2">
-                      Confirm Password <Field.RequiredIndicator />
+                      {t("form_password_confirm_label", { defaultValue: "Confirm Password" })} <Field.RequiredIndicator />
                     </Field.Label>
                     <Input
                       id="password2"
                       type="password"
-                      placeholder="Confirm your password"
+                      placeholder={t("form_password_confirm_placeholder", { defaultValue: "Confirm your password" })}
                       {...register("password2", {
-                        required: "Required",
+                        required: t("validation_required", { defaultValue: "Required" }),
                         validate: {
                           matchesPrev,
                           validatePassword: passwordValidation,
@@ -189,12 +228,18 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   </Field.Root>
                 </Stack>
               </Dialog.Body>
+
               <Dialog.Footer>
-                <Button variant="outline" onClick={onClose} type="button">Отмена</Button>
-                <Button type="submit">Зарегистрироваться</Button>
+                <Button variant="outline" onClick={onClose} type="button">
+                  {t("btn_cancel", { defaultValue: "Отмена" })}
+                </Button>
+                <Button type="submit">
+                  {t("btn_register", { defaultValue: "Зарегистрироваться" })}
+                </Button>
               </Dialog.Footer>
+
               <div style={{ marginTop: 10, textAlign: "center" }}>
-                Уже есть аккаунт?{" "}
+                {t("auth_have_account", { defaultValue: "Уже есть аккаунт?" })}{" "}
                 <button
                   type="button"
                   onClick={() => {
@@ -203,7 +248,7 @@ export const RegistrModal = ({ isOpen, onClose, onSwitchToLogin }) => {
                   }}
                   style={{ color: "blue", cursor: "pointer", background: "none", border: "none", padding: 0 }}
                 >
-                  Войти
+                  {t("auth_login", { defaultValue: "Войти" })}
                 </button>
               </div>
             </form>

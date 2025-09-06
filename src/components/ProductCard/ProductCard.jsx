@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Box, Text, Heading, HStack, VStack, Stack } from "@chakra-ui/react";
+import { Box, Text, Heading, HStack, VStack, Stack, Spinner } from "@chakra-ui/react";
 import { useAuth } from "../../contexts/AuthContext";
 import { ProductImage } from "./ProductImage";
 import { ProductBadges } from "./ProductBadges";
 import { ProductActions } from "./ProductActions";
 import { useProductPermissions } from "../../hooks/useProductPermissions";
+import { useProductLocalization } from "../../hooks/useProductLocalization";
+import { useTranslation } from "react-i18next";
 
 /**
  * Карточка товара.
@@ -23,55 +25,37 @@ import { useProductPermissions } from "../../hooks/useProductPermissions";
 export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
   const [showEditMessage, setShowEditMessage] = useState(false);
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const { canManage } = useProductPermissions(user, product);
 
-  // Цвета/стили компонента
+  // Локализованный продукт
+  const { product: localized, loading: isTranslating } = useProductLocalization(product);
+
   const bg = "white";
   const borderColor = "gray.200";
   const textColor = "gray.600";
 
-  /**
-   * Обработчик удаления товара.
-   * Выполняет запрос DELETE и уведомляет родителя через onDelete.
-   *
-   * @returns {Promise<void>}
-   */
   const handleDelete = useCallback(async () => {
     try {
       const res = await fetch(`/api/products/${product.id}`, { method: "DELETE" });
       const { success, message } = await res.json();
-
-      if (success) {
-        onDelete(product.id);
-      } else {
-        alert("Ошибка: " + message);
-      }
+      if (success) onDelete(product.id);
+      else alert("Ошибка: " + message);
     } catch (err) {
       alert("Ошибка: " + (err?.message || "Неизвестная ошибка"));
     }
   }, [onDelete, product.id]);
 
-  /**
-   * Обработчик начала редактирования.
-   * Показывает краткий инфо-баннер и передает товар наверх через onEdit.
-   */
   const handleEditClick = useCallback(() => {
     setShowEditMessage(true);
     onEdit(product);
   }, [onEdit, product]);
 
-  /**
-   * Обработчик "В корзину".
-   * Безопасно вызывает переданный проп.
-   */
   const handleAddToBasketClick = useCallback(() => {
-    if (onAddToBasket) {
-      onAddToBasket(product);
-    }
+    if (onAddToBasket) onAddToBasket(product);
   }, [onAddToBasket, product]);
 
-  // Скрываем всплывающее сообщение через 1 сек.
   useEffect(() => {
     if (showEditMessage) {
       const timer = setTimeout(() => setShowEditMessage(false), 1000);
@@ -79,10 +63,9 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
     }
   }, [showEditMessage]);
 
-  // Заглушка-эффект на изменение пользователя/владельца (оставлено для возможной логики)
   useEffect(() => {
     if (user) {
-      // Здесь можно выполнить трекинг/логирование или обновление данных пользователя и владельца
+      // здесь можно добавить трекинг
     }
   }, [user, product.ownerId]);
 
@@ -121,37 +104,33 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
           userSelect="none"
           transition="opacity 0.3s ease"
         >
-          Можете переходить к редактированию
+          {t("canEditMsg")}
         </Box>
       )}
 
-      <ProductImage
-        src={product.image}
-        alt={product.name}
-        borderColor={borderColor}
-      />
+      <ProductImage src={localized.image} alt={localized.name} borderColor={borderColor} />
 
       <VStack align="start" spacing={2} p={4} flex="1" minH="220px" w="full">
-        <ProductBadges author={product.author} category={product.category} />
+        <ProductBadges author={localized.author} category={localized.category} />
 
         <Heading
           size="md"
           noOfLines={1}
-          title={product.name}
+          title={localized.name}
           wordBreak="break-word"
           w="full"
           whiteSpace="nowrap"
           overflow="hidden"
           textOverflow="ellipsis"
         >
-          {product.name}
+          {localized.name}
         </Heading>
 
         <Text
           fontSize="sm"
           color={textColor}
           noOfLines={2}
-          title={product.description}
+          title={localized.description}
           wordBreak="break-word"
           w="full"
           overflow="hidden"
@@ -159,10 +138,10 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
           display="-webkit-box"
           style={{ WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
         >
-          {product.description}
+          {localized.description}
         </Text>
 
-        {typeof product.quantity !== "undefined" && (
+        {typeof localized.quantity !== "undefined" && (
           <Text
             fontSize="sm"
             color={textColor}
@@ -173,7 +152,7 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
             textOverflow="ellipsis"
             mt={1}
           >
-            Количество: {product.quantity}
+            {t("количество")}: {localized.quantity}
           </Text>
         )}
 
@@ -182,12 +161,13 @@ export function ProductCard({ product, onDelete, onEdit, onAddToBasket }) {
             fontWeight="bold"
             fontSize="lg"
             whiteSpace="nowrap"
-            title={`${product.price} ₽`}
+            title={`${localized.price} ₽`}
           >
-            {product.price} ₽
+            {localized.price} ₽
           </Text>
 
-          <Stack direction="row" spacing={3}>
+          <Stack direction="row" spacing={3} align="center">
+            {isTranslating && <Spinner size="sm" />}
             <ProductActions
               onAddToBasket={handleAddToBasketClick}
               onEdit={handleEditClick}

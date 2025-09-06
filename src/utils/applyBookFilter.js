@@ -24,10 +24,10 @@ export function applyBookFilter(books, filter) {
       (b.author || "").toLowerCase().includes(filter.author.toLowerCase())
     );
   }
-  if (filter.priceFrom) {
+  if (filter.priceFrom !== undefined && filter.priceFrom !== null && filter.priceFrom !== '') {
     filtered = filtered.filter((b) => Number(b.price) >= Number(filter.priceFrom));
   }
-  if (filter.priceTo) {
+  if (filter.priceTo !== undefined && filter.priceTo !== null && filter.priceTo !== '') {
     filtered = filtered.filter((b) => Number(b.price) <= Number(filter.priceTo));
   }
   if (filter.sort === "asc") {

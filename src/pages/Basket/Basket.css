@@ -1,0 +1,185 @@
+/* Контейнер страницы корзины */
+.basket-container {
+  padding: 24px 24px 32px;
+  /* color не задаем, чтобы не влиять на цвета колонок */
+}
+
+.basket-container h2 {
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff; /* Заголовок белого цвета */
+}
+
+/* Таблица корзины */
+.basket-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.basket-table thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  white-space: nowrap;
+  /* цвет не задаем — наследуется из вашей темы */
+}
+
+.basket-table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Футер */
+.basket-table tfoot td {
+  padding: 14px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Колонка Описание чуть шире на десктопе */
+.basket-table thead th:nth-child(3),
+.basket-table thead th.col-description {
+  width: 28%;
+}
+
+/* Ячейки итогов и кнопки */
+.basket-total-label {
+  text-align: center;
+  font-weight: 600;
+  color: #ffffff; /* как было в исходнике */
+}
+
+.basket-total-value {
+  font-weight: 600;
+  color: #ffffff; /* как было в исходнике */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Кнопка оплаты */
+.pay-button {
+  background-color: transparent;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.pay-button:hover,
+.pay-button:focus-visible {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.pay-button:active {
+  transform: translateY(0);
+}
+
+/* ========== Адаптив ========== */
+
+/* Планшеты: ужимаем типографику и скрываем менее важную колонку "Категория" (4) */
+@media (max-width: 1024px) {
+  .basket-container {
+    padding: 20px;
+  }
+
+  .basket-container h2 {
+    font-size: 24px;
+  }
+
+  .basket-table thead th,
+  .basket-table tbody td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  /* Скрыть колонку Категория (4-я) */
+  .basket-table thead th:nth-child(4),
+  .basket-table tbody td:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Телефоны: более компактно, скрываем "Описание" (3) и "Автор" (5),
+   футер складываем в блок, кнопка на всю ширину */
+@media (max-width: 768px) {
+  .basket-container {
+    padding: 16px;
+  }
+
+  .basket-container h2 {
+    font-size: 20px;
+  }
+
+  .basket-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto; /* страхуемся от переполнения */
+  }
+
+  .basket-table thead th,
+  .basket-table tbody td {
+    padding: 8px 6px;
+    font-size: 12px;
+  }
+
+  /* Скрыть Описание (3-я) и Автор (5-я) */
+  .basket-table thead th:nth-child(3),
+  .basket-table tbody td:nth-child(3),
+  .basket-table thead th:nth-child(5),
+  .basket-table tbody td:nth-child(5) {
+    display: none;
+  }
+
+  /* Футер в один столбец (итог + сумма + кнопка) */
+  .basket-table tfoot tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .basket-table tfoot td {
+    display: block;
+    border: none;
+    padding: 6px 0;
+  }
+
+  .basket-total-label {
+    text-align: left;
+  }
+
+  .basket-total-value {
+    justify-content: space-between;
+  }
+
+  .pay-button {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+/* Очень маленькие экраны: при необходимости можно скрыть колонку с изображением */
+@media (max-width: 480px) {
+  /* Если нужно освободить место, раскомментируйте:
+  .basket-table thead th:nth-child(1),
+  .basket-table tbody td:nth-child(1) {
+    display: none;
+  } */
+
+  .basket-container h2 {
+    font-size: 18px;
+  }
+}

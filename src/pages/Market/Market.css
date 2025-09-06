@@ -13,6 +13,14 @@
   font-family: Arial, sans-serif;
 }
 
+/* Заголовок страницы */
+.market__title {
+  color: #ffffff;
+  text-align: center;
+  margin: 8px 0 16px;
+  font-weight: 700;
+}
+
 /* Кнопки "Создать товар" и "Применить фильтр" */
 .btn-create-product,
 .btn-create-product-filter {

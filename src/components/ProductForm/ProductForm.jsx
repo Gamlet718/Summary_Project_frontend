@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProductForm.css";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const CATEGORIES = [
   "практическое",
@@ -15,8 +16,43 @@ const CATEGORIES = [
   "другое",
 ];
 
+// Встроенная карта переводов для отображения лейблов категорий в текущем языке.
+// Значения опций остаются русскими (как в данных), чтобы не ломать сохранение и фильтрацию.
+const CATEGORY_LABELS = {
+  ru: {
+    "практическое": "Практические",
+    "учебное": "Учебные",
+    "информационное": "Информационные",
+    "художественное": "Художественные",
+    "научное": "Научные",
+    "социально-политическое": "Социально-политические",
+    "рекламное": "Рекламные",
+    "научно-популярное": "Научно-популярные",
+    "для досуга": "Для досуга",
+    "другое": "Другое",
+  },
+  en: {
+    "практическое": "Practical",
+    "учебное": "Educational",
+    "информационное": "Informational",
+    "художественное": "Fiction",
+    "научное": "Scientific",
+    "социально-политическое": "Socio-political",
+    "рекламное": "Advertising",
+    "научно-популярное": "Popular science",
+    "для досуга": "Leisure",
+    "другое": "Other",
+  },
+};
+
+function getUiLang(i18n) {
+  const lng = (i18n?.language || "ru").toLowerCase();
+  return lng.startsWith("en") ? "en" : "ru";
+}
+
 const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -72,14 +108,16 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
 
   const validate = () => {
     const e = {};
-    if (!formData.name.trim()) e.name = "Название книги обязательно";
+    if (!formData.name.trim())
+      e.name = t("product_form_error_name_required", { defaultValue: "Название книги обязательно" });
     if (!formData.description.trim())
-      e.description = "Описание книги обязательно";
+      e.description = t("product_form_error_description_required", { defaultValue: "Описание книги обязательно" });
     if (!formData.price || formData.price <= 0)
-      e.price = "Укажите корректную цену";
-    if (!formData.category) e.category = "Выберите категорию";
+      e.price = t("product_form_error_price_invalid", { defaultValue: "Укажите корректную цену" });
+    if (!formData.category)
+      e.category = t("product_form_error_category_required", { defaultValue: "Выберите категорию" });
     if (!formData.quantity || formData.quantity < 0)
-      e.quantity = "Укажите количество книг";
+      e.quantity = t("product_form_error_quantity_required", { defaultValue: "Укажите количество книг" });
     return e;
   };
 
@@ -120,10 +158,11 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
 
         setAlert({
           status: "success",
-          message: isEdit ? "Книга успешно изменена" : "Книга успешно создана",
+          message: isEdit
+            ? t("product_form_alert_saved", { defaultValue: "Книга успешно изменена" })
+            : t("product_form_alert_created", { defaultValue: "Книга успешно создана" }),
         });
 
-        // Вызываем onSuccess ОДИН раз
         onSuccess && onSuccess(saved);
 
         if (!isEdit) {
@@ -141,14 +180,16 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
       } else {
         const msg = Array.isArray(result.errors)
           ? result.errors.join(", ")
-          : result.message || "Ошибка при сохранении книги";
+          : result.message || t("product_form_alert_save_error", { defaultValue: "Ошибка при сохранении книги" });
         setAlert({ status: "error", message: msg });
         console.log("[ProductForm] handleSubmit: error", msg);
       }
     } catch (err) {
       setAlert({
         status: "error",
-        message: "Ошибка соединения с сервером. Проверьте доступность API.",
+        message: t("product_form_alert_network_error", {
+          defaultValue: "Ошибка соединения с сервером. Проверьте доступность API.",
+        }),
       });
       console.log("[ProductForm] handleSubmit: fetch error", err);
     } finally {
@@ -172,6 +213,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
   };
 
   const isEdit = Boolean(product?.id);
+  const lang = getUiLang(i18n);
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -198,21 +240,23 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
           <button
             className="btn-close-form"
             onClick={handleClose}
-            aria-label="Закрыть форму"
+            aria-label={t("product_form_close_aria", { defaultValue: "Закрыть форму" })}
             type="button"
           >
             ×
           </button>
 
           <h2 className="form-title">
-            {isEdit ? "Редактирование книги" : "Создание новой книги"}
+            {isEdit
+              ? t("product_form_title_edit", { defaultValue: "Редактирование книги" })
+              : t("product_form_title_create", { defaultValue: "Создание новой книги" })}
           </h2>
 
           <form onSubmit={handleSubmit} className="product-form">
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="name" className="form-label">
-                  Название книги *
+                  {t("product_form_name_label", { defaultValue: "Название книги *" })}
                 </label>
                 <input
                   type="text"
@@ -221,7 +265,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                   value={formData.name}
                   onChange={handleChange}
                   className={`form-input ${errors.name ? "error" : ""}`}
-                  placeholder="Введите название книги"
+                  placeholder={t("product_form_name_placeholder", { defaultValue: "Введите название книги" })}
                 />
                 {errors.name && (
                   <span className="error-message">{errors.name}</span>
@@ -232,7 +276,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="description" className="form-label">
-                  Описание *
+                  {t("product_form_desc_label", { defaultValue: "Описание *" })}
                 </label>
                 <textarea
                   id="description"
@@ -241,7 +285,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                   value={formData.description}
                   onChange={handleChange}
                   className={`form-textarea ${errors.description ? "error" : ""}`}
-                  placeholder="Описание книги"
+                  placeholder={t("product_form_desc_placeholder", { defaultValue: "Описание книги" })}
                 />
                 {errors.description && (
                   <span className="error-message">{errors.description}</span>
@@ -252,7 +296,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="price" className="form-label">
-                  Цена (₽) *
+                  {t("product_form_price_label", { defaultValue: "Цена (₽) *" })}
                 </label>
                 <input
                   type="number"
@@ -271,7 +315,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
               </div>
               <div className="form-group">
                 <label htmlFor="quantity" className="form-label">
-                  Количество *
+                  {t("product_form_quantity_label", { defaultValue: "Количество *" })}
                 </label>
                 <input
                   type="number"
@@ -292,7 +336,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="category" className="form-label">
-                  Категория *
+                  {t("product_form_category_label", { defaultValue: "Категория *" })}
                 </label>
                 <select
                   id="category"
@@ -301,10 +345,12 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                   onChange={handleChange}
                   className={`form-select ${errors.category ? "error" : ""}`}
                 >
-                  <option value="">Выберите категорию</option>
+                  <option value="">
+                    {t("product_form_category_placeholder", { defaultValue: "Выберите категорию" })}
+                  </option>
                   {CATEGORIES.map((c) => (
                     <option key={c} value={c}>
-                      {c}
+                      {CATEGORY_LABELS[lang]?.[c] ?? c}
                     </option>
                   ))}
                 </select>
@@ -314,7 +360,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
               </div>
               <div className="form-group">
                 <label htmlFor="author" className="form-label">
-                  Автор
+                  {t("product_form_author_label", { defaultValue: "Автор" })}
                 </label>
                 <input
                   type="text"
@@ -323,7 +369,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                   value={formData.author}
                   onChange={handleChange}
                   className="form-input"
-                  placeholder="Автор книги"
+                  placeholder={t("product_form_author_placeholder", { defaultValue: "Автор книги" })}
                 />
               </div>
             </div>
@@ -331,7 +377,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="image" className="form-label">
-                  URL изображения
+                  {t("product_form_image_label", { defaultValue: "URL изображения" })}
                 </label>
                 <input
                   type="url"
@@ -340,7 +386,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                   value={formData.image}
                   onChange={handleChange}
                   className="form-input"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder={t("product_form_image_placeholder", { defaultValue: "https://example.com/image.jpg" })}
                 />
               </div>
             </div>
@@ -348,7 +394,7 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
               <div className="image-preview">
                 <img
                   src={formData.image}
-                  alt="Предпросмотр"
+                  alt={t("product_form_image_alt", { defaultValue: "Предпросмотр" })}
                   onError={(e) => (e.target.style.display = "none")}
                 />
               </div>
@@ -361,7 +407,9 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
                 onClick={isEdit ? handleClose : clearForm}
                 disabled={busy}
               >
-                {isEdit ? "Отмена" : "Очистить"}
+                {isEdit
+                  ? t("product_form_btn_cancel", { defaultValue: "Отмена" })
+                  : t("product_form_btn_clear", { defaultValue: "Очистить" })}
               </button>
               <button
                 type="submit"
@@ -370,11 +418,11 @@ const ProductForm = ({ product = null, onSuccess, onCancel, style, modal }) => {
               >
                 {busy
                   ? isEdit
-                    ? "Сохранение..."
-                    : "Создание..."
+                    ? t("product_form_btn_saving", { defaultValue: "Сохранение..." })
+                    : t("product_form_btn_creating", { defaultValue: "Создание..." })
                   : isEdit
-                  ? "Сохранить"
-                  : "Создать книгу"}
+                  ? t("product_form_btn_save", { defaultValue: "Сохранить" })
+                  : t("product_form_btn_create", { defaultValue: "Создать книгу" })}
               </button>
             </div>
           </form>

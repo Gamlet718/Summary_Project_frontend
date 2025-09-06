@@ -9,19 +9,26 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "server:dev": "nodemon server/index.js"
+    "server:dev": "nodemon server/index.js",
+    "i18n:extract": "i18next -c i18next-parser.config.cjs 'src/**/*.{js,jsx,ts,tsx}'",
+    "i18n:translate": "node scripts/translate.js en",
+    "i18n:update": "npm run i18n:extract && npm run i18n:translate"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.21.0",
     "@emotion/react": "^11.14.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "firebase": "^11.10.0",
+    "firebase-admin": "^12.7.0",
+    "i18next": "^25.4.2",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.1",
+    "react-i18next": "^15.7.2",
     "react-icons": "^5.5.0",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^7.6.2",
@@ -38,6 +45,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "firebase-tools": "^14.10.1",
     "globals": "^16.2.0",
+    "i18next-parser": "^9.3.0",
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.1.10",
     "vite": "^7.0.0-beta.2"
   }

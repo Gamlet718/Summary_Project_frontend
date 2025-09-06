@@ -2,6 +2,13 @@
   display: flex;
   min-height: 80vh;
   font-family: Arial, sans-serif;
+  width: 100%;
+  overflow-x: hidden; /* чтобы справа ничего не “торчало” на малых экранах */
+}
+
+/* box-sizing внутри контейнера для стабильных размеров */
+.profile-container, .profile-container * {
+  box-sizing: border-box;
 }
 
 .profile-sidebar {
@@ -50,6 +57,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  word-break: break-word;
 }
 
 .profile-edit-link {
@@ -114,11 +122,19 @@
   gap: 32px;
 }
 
+.profile-main h2 {
+  font-size: 22px;
+  margin: 0;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
 .profile-main-info {
   display: flex;
   align-items: center;
   gap: 32px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
 .profile-desc {
@@ -150,6 +166,7 @@
   font-weight: bold;
   font-size: 18px;
   margin-bottom: 4px;
+  word-break: break-word;
 }
 
 .profile-value-missing {
@@ -177,6 +194,8 @@
   border-radius: 12px;
   width: 400px;
   max-width: 90vw;
+  max-height: 90vh; /* на маленьких экранах контент прокручивается внутри */
+  overflow: auto;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   padding: 0;
   display: flex;
@@ -217,7 +236,8 @@
 }
 
 .dialog-body input[type="text"],
-.dialog-body input[type="date"] {
+.dialog-body input[type="date"],
+.dialog-body input[type="tel"] {
   padding: 8px 10px;
   border: 1px solid #cbd5e0;
   border-radius: 6px;
@@ -228,6 +248,7 @@
   display: flex;
   gap: 16px;
   margin-top: 4px;
+  flex-wrap: wrap;
 }
 
 .dialog-footer {
@@ -255,4 +276,169 @@
 
 .dialog-btn-primary:hover {
   background: #2563eb;
+}
+
+/* =========== Tablet (<=1024px) =========== */
+@media (max-width: 1024px) {
+  .profile-sidebar {
+    width: 260px;
+    padding: 24px 20px;
+    margin: 16px;
+  }
+
+  .profile-main {
+    margin: 16px;
+    padding: 24px 28px;
+  }
+
+  .profile-main-header {
+    gap: 20px;
+  }
+
+  .avatar-large {
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+  }
+
+  .profile-main-info {
+    gap: 16px;
+  }
+
+  .profile-contacts {
+    gap: 32px;
+  }
+}
+
+/* =========== Mobile (<=768px) =========== */
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .profile-sidebar,
+  .profile-main {
+    width: calc(100% - 24px);
+    margin: 12px;
+    border-radius: 14px;
+  }
+
+  .profile-sidebar {
+    padding: 16px 14px;
+    align-items: stretch;
+  }
+
+  .profile-main {
+    padding: 18px 16px;
+  }
+
+  .profile-name {
+    font-size: 18px;
+  }
+
+  .profile-menu-title {
+    font-size: 15px;
+  }
+
+  .profile-menu-btn {
+    font-size: 14px;
+    padding: 6px 0;
+  }
+
+  .profile-main-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .avatar-circle {
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
+
+  .avatar-large {
+    width: 64px;
+    height: 64px;
+    font-size: 32px;
+  }
+
+  .profile-main h2 {
+    font-size: 18px;
+  }
+
+  .profile-main-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .profile-value {
+    font-size: 16px;
+  }
+
+  .profile-warning {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .profile-label {
+    font-size: 14px;
+  }
+
+  .profile-contacts {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-edit-link {
+    font-size: 13px;
+  }
+
+  .profile-desc {
+    font-size: 14px;
+  }
+}
+
+/* =========== Small Mobile (<=480px) =========== */
+@media (max-width: 480px) {
+  .profile-sidebar,
+  .profile-main {
+    width: calc(100% - 16px);
+    margin: 8px;
+  }
+
+  .profile-main {
+    padding: 16px 12px;
+  }
+
+  .dialog-content {
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 10px;
+  }
+
+  .dialog-header {
+    padding: 16px 14px 0 14px;
+    font-size: 18px;
+  }
+
+  .dialog-body {
+    padding: 12px 14px;
+  }
+
+  .dialog-footer {
+    padding: 12px 14px 16px 14px;
+  }
+
+  .dialog-btn {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+
+  .dialog-body input[type="text"],
+  .dialog-body input[type="date"],
+  .dialog-body input[type="tel"] {
+    font-size: 14px;
+  }
 }
